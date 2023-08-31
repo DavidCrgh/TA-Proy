@@ -1,42 +1,53 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include "dfa.h"
+#include "matrix.h"
 
-int main(int argc, char **argv) 
-{
-	printf("Hello World\n");
-	//testingDFA();
-	return 0;
-}
-
+char *symbols;
 
 void testingDFA()
 {
-	int size = 9;
-	int lista1[] = {3, 1, 2, 0};
-	int lista2[] = {0, 1, 2, 0};
-	int lista3[] = {3, 1, 3, 0};
-	int lista4[] = {3, 3, 3, 3};
-
-	int *tabla[] = {lista1, lista2, lista3, lista4};
+	srand(time(NULL));
 	
-	int accept[4] = {1, 1, 1, 0};
+	char *input = "CTGA";
+	int rows = 3;
+	int columns = 3;
+	int len_input = strlen(input);
+	symbols = "ACGT";
 	
-	int *sequence = (int *)malloc(size * sizeof(int));
+	int **table = createMatrix(rows, columns);
+	int *sequence = createList(len_input);
+	int *accept = createList(rows);
 	
-	for(int i = 0; i < size; i++)
-	{
-		sequence[i] = -1;
-	}
+	//fill lists and table with random numbers (for testing)
 	
-	int result = dfa_driver(tabla, accept, code, "CTGCTGCTG", 0, sequence);
-   	printf("The integer is: %d\n", result);
+	fillListRandom(accept, rows, 0, 1);
+	fillMatrix(table, rows, columns, 0, rows - 1);
+	
+	
+	
+	int result = dfa_driver(table, accept, code, input, 0, sequence);
+   	printf("Result: %d\n", result);
    	printf("The string goes through the following states:\n");
-   	for(int i = 0; i < size; i++)
+   	for(int i = 0; i < len_input; i++)
 	{
 		printf("%d,", sequence[i]);
 	}
 	printf("\n");
    	
+   	
+   	free(accept);
    	free(sequence);
+   	freeMatrix(table, rows);
 }
+
+int main(int argc, char **argv) 
+{
+	printf("Hello World\n");
+	testingDFA();
+	return 0;
+}
+
+
