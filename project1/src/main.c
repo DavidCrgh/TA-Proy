@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "gui.h"
+
 int main(int argc, char **argv) 
 {
-    printf("Hello world!\n");
+    init_gui(argc, argv);
     return 0;
 }
