@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "gui.h"
+#include "ui/setup_ui.h"
 
 int main(int argc, char **argv) 
 {

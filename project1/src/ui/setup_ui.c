@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include "gui.h"
+#include "setup_ui.h"
 #include "common.h"
 
 // Global vars for widget refs
