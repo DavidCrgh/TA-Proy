@@ -17,14 +17,13 @@ int dfa_driver(
 	s = string;
 	k = state;
 	
-	int i = 0;
+	int i = 0; 
 	while (*s)
 	{
-		sequence[i] = k;
+		sequence[i++] = k;
 		k = table[k][code(*s++)];
-		i++;
 	}
-		
+	sequence[i] = k;
 	return (accept[k]);
 }
 
