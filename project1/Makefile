@@ -7,7 +7,7 @@ CFLAGS += -g -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
 
 TARGET_BASE=project
 TARGET = $(TARGET_BASE)$(TARGET_EXTENSION)
-SRC_FILES := $(wildcard src/*.c)
+SRC_FILES := $(wildcard src/*.c) $(wildcard src/*/*.c)
 SRC_TEST_FILES=$(filter-out src/main.c, $(SRC_FILES))
 INC_DIRS=-Isrc
 LDFLAGS= -lm

@@ -75,9 +75,11 @@ void testingDFA()
 
 int main(int argc, char **argv) 
 {
-	printf("Hello World\n");
-	testingDFA();
-	return 0;
+    init_gui(argc, argv);
+    return 0;
+	//printf("Hello World\n");
+	//testingDFA();
+	// return 0;
 }
 
 
