@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrix.h"
-
-void errorMessage(char *message)
-{
-	perror(message);
-	exit(1);
-}
+#include "common.h"
 
 void fillListRandom(int *list, int total, int min, int max)
 {
