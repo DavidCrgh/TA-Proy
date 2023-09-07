@@ -6,6 +6,7 @@
 #include "../logic/common.h"
 #include "../logic/matrix.h"
 #include "../logic/dfa.h"
+#include "../logic/controller.h"
 
 // Extra columns for transition table grid
 #define HEADER_ROWS 1
@@ -79,6 +80,22 @@ static void get_datas(GtkWidget *widget, gpointer data)
     }
     // Finish get configuration for automaton
     
+    // NOTE 1: the arrays passed to set_machine_config shouldn't be freed manually,
+    // otherwise a segfault will occur when executing the automaton. To avoid leaks,
+    // the controller frees the memory on repeated calls to set_machine_config
+    //
+    // NOTE 2: the DFA driver can't be called yet because we haven't received the input
+    // string to process
+
+    set_machine_config(
+        table, 
+        entry_data,         // State labels
+        acceptance_states, 
+        entry_values,       // Alphabet symbols
+        0);                 // Initial state
+
+
+    /*
     // Post evaluate
     // 4. Call DFA_driver
     char *input = "ababbbabbabbaab";
@@ -104,7 +121,7 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	}
 	free(entry_data);	
 	free(entry_values);
-	
+	*/
 }
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
@@ -188,7 +205,7 @@ void init_widget_refs() {
     symbols_spin = GTK_WIDGET(gtk_builder_get_object(builder, "symbols_spin"));
 
     ok_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_ok"));
-    reset_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_reset"));
+    // reset_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_reset"));
     eval_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_evaluate"));
 
 	// Attach the callbacks for window, buttons and other controls
