@@ -140,6 +140,7 @@
               <object class="GtkButton" id="setup_evaluate">
                 <property name="label" translatable="yes">EVALUATE</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
               </object>

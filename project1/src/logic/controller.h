@@ -3,6 +3,6 @@
 
 
 void set_machine_config(int **table, char **state_labels, int *accept, char *symbols, int first_state);
-void execute_machine(char *input, char *sequence);
+int execute_machine(char *input, int *sequence);
 
 #endif // CONTROLLER_H

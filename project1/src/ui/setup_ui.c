@@ -28,8 +28,9 @@ GtkWidget *reset_button;
 GtkWidget *eval_button;
 
 GError *error = NULL;
-///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
 
+
+///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
 
 static void get_datas(GtkWidget *widget, gpointer data)
 {
@@ -149,11 +150,15 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
     for (int i = 0; i < num_symbols; i++) {
         entries[i] = GTK_ENTRY(gtk_entry_new());
         gtk_entry_set_max_length(entries[i], 1);
-        
         gtk_entry_set_text(entries[i], get_char(symbols[i]));
+        gtk_entry_set_alignment(entries[i], 0.5);
+        gtk_widget_set_margin_bottom(GTK_WIDGET(entries[i]), 15);
+
         gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(entries[i]), i + LEFT_COLS, 0, 1, 1);
     }
+
     wdg = gtk_label_new("Accept?");
+    gtk_widget_set_margin_bottom(wdg, 15);
     gtk_grid_attach(GTK_GRID(grid), wdg, LEFT_COLS + num_symbols, 0, 1, 1); 
 
     // 2. Build left side columns (1 entry box, 1 label) x num_states
@@ -161,6 +166,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
       
         text = g_strdup_printf("%d", i + 1);
         wdg = gtk_entry_new_with_buffer(gtk_entry_buffer_new(text, -1));
+        gtk_entry_set_alignment(GTK_ENTRY(wdg), 0.5);
         gtk_grid_attach(GTK_GRID(grid), wdg, 0, i + HEADER_ROWS, 1, 1);
 
 
@@ -169,6 +175,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
         // 3. Build right side column (1 check box)
         wdg = gtk_check_button_new();
+        gtk_widget_set_halign(wdg, GTK_ALIGN_CENTER);
         gtk_grid_attach(GTK_GRID(grid), wdg, LEFT_COLS + num_symbols, i + HEADER_ROWS, 1, 1);
     }
 
@@ -190,6 +197,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
       	}
     }
     
+    gtk_widget_set_sensitive(eval_button, TRUE);
     gtk_widget_show_all(window);
 }
 
@@ -232,7 +240,7 @@ int init_gui(int argc, char *argv[]) {
 
     init_widget_refs();
 
-	g_object_unref(builder);	//Unref builder
+	g_object_unref(builder);    //Unref builder
     gtk_main();
 
     return OK;

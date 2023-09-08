@@ -3,6 +3,7 @@
 #include "controller.h"
 #include "common.h"
 #include "matrix.h"
+#include "logic/dfa.h"
 
 
 static machine_conf_t *config = NULL;
@@ -54,6 +55,14 @@ void set_machine_config(int **table, char **state_labels, int *accept, char *sym
     config->first_state = first_state;
 }
 
-void execute_machine(char *input, char *sequence) {
-    return; // TODO: stump, plending implementation
+int execute_machine(char *input, int *sequence) {
+
+    return dfa_driver(
+        config->table,
+        config->accept,
+        code,
+        input,
+        config->first_state,
+        sequence
+    );
 }
