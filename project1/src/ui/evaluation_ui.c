@@ -55,10 +55,8 @@ void on_reset_button_clicked(GtkButton * b) {
 
 void on_evaluate_button_clicked(GtkButton * b) {
     gtk_label_set_text(GTK_LABEL(final_state_label), symbols);
-
 }
 
 void on_finish_button_clicked(GtkButton * b) {
     gtk_window_close(evaluation_window);
 }
-
