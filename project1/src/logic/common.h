@@ -24,5 +24,6 @@ typedef struct machine_conf_t {
 } machine_conf_t;
 
 char *get_char(char c);
+void errorMessage(char *message);
 
 #endif // COMMON_H

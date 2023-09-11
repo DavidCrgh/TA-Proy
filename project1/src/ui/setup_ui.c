@@ -5,6 +5,7 @@
 #include "setup_ui.h"
 #include "../logic/common.h"
 #include "../logic/matrix.h"
+#include "../logic/list.h"
 #include "../logic/dfa.h"
 #include "../logic/controller.h"
 

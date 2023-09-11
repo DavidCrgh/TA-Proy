@@ -3,7 +3,8 @@
 #include "controller.h"
 #include "common.h"
 #include "matrix.h"
-#include "logic/dfa.h"
+#include "list.h"
+#include "dfa.h"
 
 
 static machine_conf_t *config = NULL;

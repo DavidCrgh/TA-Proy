@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "test.h"
 #include "../logic/dfa.h"
+#include "../logic/list.h"
 #include "../logic/matrix.h"
 #include "../logic/common.h"
 
@@ -15,8 +16,8 @@ void testingDFA()
 	symbols = "ACGT";
 	char *input = "CGGA";
 	
-	int rows = num_states;
-	int columns = num_symbols;
+	int rows = 4;
+	int columns = 4;
 	printf("Rows and columns: %d %d", rows, columns);
 	int len_input = strlen(input);
 	
@@ -28,7 +29,7 @@ void testingDFA()
 	//fill lists and table with random numbers (for testing)
 	
 	fillListRandom(accept, rows, 0, 1);
-	fillMatrixRandom(table, rows, columns, 0, rows - 1);
+	fillMatrixRandom(table, rows, columns, -1, rows - 1);
 	
 	
 	
