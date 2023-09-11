@@ -38,7 +38,7 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	GtkGrid *actual_grid = GTK_GRID(grid);
 	// Get configuration for automaton
 	// 1. Get data of headers row
-	char *entry_values = (char *) malloc(num_symbols + 1);
+	char *entry_values = (char *) createList(num_symbols + 1, sizeof(char));
 	for(int i = 0; i < num_symbols; i++)
 	{
 		GtkWidget *header_symbol = gtk_grid_get_child_at(actual_grid, i + LEFT_COLS, 0);
@@ -51,9 +51,9 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	
 	
 	// 2. Get state tags and acceptance states
-	char **entry_data = (char **) malloc(num_states * sizeof(char *));
+	char **entry_data = (char **) createMatrix(num_states, 30, sizeof(char *));
 	
-	int *acceptance_states = createList(num_states);
+	int *acceptance_states = (int *)createList(num_states, sizeof(int));
 	for(int j = 0; j < num_states; j++)
 	{
 		// Tags
@@ -69,7 +69,7 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	}
 	
 	// 3. Get values from matrix
-	int ** table = createMatrix(num_states, num_symbols);
+	int ** table = (int **)createMatrix(num_states, num_symbols, sizeof(int));
 	
 	for (int i = 0; i < num_states; i++) 
 	{

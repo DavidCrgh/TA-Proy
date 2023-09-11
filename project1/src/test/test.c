@@ -22,9 +22,9 @@ void testingDFA()
 	int len_input = strlen(input);
 	
 	
-	int **table = createMatrix(rows, columns);
-	int *sequence = createList(len_input + 1);
-	int *accept = createList(rows);
+	int **table = (int **)createMatrix(rows, columns, sizeof(int));
+	int *sequence = (int*)createList(len_input + 1, sizeof(int));
+	int *accept = (int *)createList(rows, sizeof(int));
 	
 	//fill lists and table with random numbers (for testing)
 	

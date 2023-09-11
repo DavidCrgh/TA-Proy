@@ -15,10 +15,10 @@ void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
 	}
 }
 
-int **createMatrix(int rows, int columns)
+void **createMatrix(int rows, int columns, size_t size)
 {
-	int **matrix;
-	matrix = (int **) malloc(rows * sizeof(int *));	// Assign memory for rows
+	void **matrix;
+	matrix = malloc(rows * sizeof(void *));	// Assign memory for rows
 	if(matrix == NULL)
 	{
 		errorMessage("Error to assign memory");
@@ -26,7 +26,7 @@ int **createMatrix(int rows, int columns)
 	
 	for(int i = 0; i < rows; i++)
 	{
-		matrix[i] = createList(columns);
+		matrix[i] = createList(columns, size);
 		if(matrix[i] == NULL)
 		{
 			errorMessage("Error to assign memory");

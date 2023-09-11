@@ -11,10 +11,9 @@ void fillListRandom(int *list, int total, int min, int max)
 	}
 }
 
-int *createList(int total)
+void *createList(int total, size_t size)
 {
-	int *list = (int *) malloc(total *sizeof(int));
-	fillList(list, total);
+	void *list = (void *) malloc(total *sizeof(size));
 	return list;
 }
 
