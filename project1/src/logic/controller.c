@@ -6,6 +6,8 @@
 #include "list.h"
 #include "dfa.h"
 
+#include "../test/test.h"
+
 
 static machine_conf_t *config = NULL;
 
@@ -47,6 +49,8 @@ void set_machine_config(int **table, char **state_labels, int *accept, char *sym
     config->accept = accept;
     config->symbols = symbols;
     config->first_state = first_state;
+
+    print_machine_config(config);
 }
 
 int execute_machine(char *input, int *sequence) {

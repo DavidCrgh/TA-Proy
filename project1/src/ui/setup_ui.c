@@ -107,7 +107,6 @@ static void get_datas(GtkWidget *widget, gpointer data)
 		else
 			strcat(entry_values, gtk_entry_get_text(GTK_ENTRY(header_symbol)));
 	}
-	g_print("Symbols to use: %s\n", entry_values);
 	
 	
 	// 2. Get state tags and acceptance states
@@ -119,13 +118,11 @@ static void get_datas(GtkWidget *widget, gpointer data)
 		// Tags
 		GtkWidget *wdg = gtk_grid_get_child_at(actual_grid, 0, j + HEADER_ROWS);
 		entry_data[j] = strdup(gtk_entry_get_text(GTK_ENTRY(wdg)));
-		g_print("Element %d: %s\n", j + HEADER_ROWS, entry_data[j]);
 		
 		// Acceptance
 		wdg = gtk_grid_get_child_at(actual_grid, LEFT_COLS + num_symbols, j + HEADER_ROWS);
 		gboolean checked = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(wdg));
 		acceptance_states[j] = (checked ? 1 : 0); 
-		g_print("\tAcceptance %d: %d\n", j + HEADER_ROWS, acceptance_states[j]);
 	}
 	
 	// 3. Get values from matrix
@@ -137,8 +134,6 @@ static void get_datas(GtkWidget *widget, gpointer data)
       	{
       		GtkWidget *state_to_visit = gtk_grid_get_child_at(actual_grid, j + LEFT_COLS, i + HEADER_ROWS);
             table[i][j] = get_combobox_value(state_to_visit);
-            
-      		g_print("Table[%d][%d]=%d\n", i, j, table[i][j]);
       	}
     }
     // Finish get configuration for automaton
@@ -165,8 +160,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
 	num_states = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(states_spin));
     num_symbols = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(symbols_spin));
-
-    g_print("NUM_STATES: %d \t NUM_SYMBOLS: %d\n\n", num_states, num_symbols);
+    
 	
 	GtkWidget *wdg;
     gchar *text;

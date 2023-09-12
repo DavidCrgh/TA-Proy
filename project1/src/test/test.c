@@ -74,3 +74,45 @@ void testingDFA()
    	free(sequence);
    	freeMatrix((void**)table, rows);
 }
+
+
+void print_machine_config(machine_conf_t *conf) {
+
+	printf("////////////////////////////////////////////////\n");
+	printf("MACHINE CONFIGURATION\n\n");
+
+	printf("num_states: %d\tnum_symbols: %d\n", conf->num_states, conf->num_symbols);
+	printf("first_state: %d\tsymbols: %s\n\n\n", conf->first_state, conf->symbols);
+
+	printf("STATES: \n\n");
+	printf("Index\tTag\tAcceptance?\n");
+
+	for(int i = 0; i < conf->num_states; i++) {
+
+		printf(
+			"%d\t%s\t%d\n", 
+			i + 1,
+			conf->labels[i],
+			conf->accept[i]);
+
+	}
+
+	printf("\n\n\n");
+
+	printf("TRANSITION TABLE: \n\n");
+
+	for (int i = 0; i < conf->num_states; i++) {
+
+		for (int j = 0; j < conf->num_symbols; j++) {
+			
+			printf("%d (%d,%c)\t", conf->table[i][j], i + 1, conf->symbols[j]);
+
+		}
+
+		printf("\n\n");
+
+	}
+
+	printf("////////////////////////////////////////////////\n\n");
+
+}
