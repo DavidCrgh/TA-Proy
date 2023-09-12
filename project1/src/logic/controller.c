@@ -13,15 +13,8 @@ static machine_conf_t *config = NULL;
 
 void free_config() {
 
-    for (int i = 0; i < config->num_states; i++) {
-
-        free(config->table[i]);
-        free(config->labels[i]);
-
-    }
-
-    free(config->table);
-    free(config->labels);
+    freeMatrix((void**) config->table, config->num_states);
+    freeMatrix((void**) config->labels, config->num_states);
     free(config->symbols);
     free(config->accept);
 

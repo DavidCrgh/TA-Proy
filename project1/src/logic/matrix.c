@@ -36,7 +36,7 @@ void **createMatrix(int rows, int columns, size_t size)
 	return matrix;
 }
 
-void freeMatrix(int **table, int rows)
+void freeMatrix(void **table, int rows)
 {
 	for (int i = 0; i < rows; i++)
 	{

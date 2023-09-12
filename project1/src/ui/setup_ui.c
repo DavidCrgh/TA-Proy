@@ -11,8 +11,13 @@
 
 // Extra columns for transition table grid
 #define HEADER_ROWS 1
-#define LEFT_COLS 2
+#define LEFT_COLS 3
 #define RIGHT_COLS 1
+
+#define MAX_TAGS_LEN  20
+#define MAX_CB_STRING_LEN 10
+#define HEADER_BOTTOM_MARGIN 15
+#define ENTRY_CENTER_ALIGNMENT 0.5
 
 // Global vars for widget refs
 GtkBuilder *builder;
@@ -28,14 +33,69 @@ GtkWidget *ok_button;
 GtkWidget *reset_button;
 GtkWidget *eval_button;
 
+char **combo_strings = NULL;
+
 GError *error = NULL;
 
 
 ///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
 
+static void free_combo_strings() {
+    if (combo_strings != NULL) {
+        
+        freeMatrix((void**) combo_strings, num_states + 1);
+    }
+}
+
+
+static void init_combo_strings() {
+
+
+    combo_strings = (char**) createMatrix(num_states + 1, MAX_CB_STRING_LEN, sizeof(char*));
+
+    for (int i = 0; i <= num_states; i++) {
+
+
+        if (i == 0) {
+            snprintf(combo_strings[i], MAX_CB_STRING_LEN, "-");
+
+        } else {
+
+            snprintf(combo_strings[i], MAX_CB_STRING_LEN, "%d", i);
+        }
+    }
+
+}
+
+static GtkWidget* create_combobox() {
+    GtkWidget *combobox;
+    
+    combobox = gtk_combo_box_text_new();
+
+    for (int i = 0; i <= num_states; i++) {
+
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combobox), NULL, combo_strings[i]);
+        gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), 0);
+    }
+
+
+    return combobox;
+}
+
+
+static int get_combobox_value(GtkWidget *cb) {
+
+    int selected_item = gtk_combo_box_get_active(GTK_COMBO_BOX(cb));
+    gchar *text = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(cb));
+
+    return (selected_item == 0 ? -1 : atoi(text));
+
+}
+
 static void get_datas(GtkWidget *widget, gpointer data)
 {
 	GtkGrid *actual_grid = GTK_GRID(grid);
+
 	// Get configuration for automaton
 	// 1. Get data of headers row
 	char *entry_values = (char *) createList(num_symbols + 1, sizeof(char));
@@ -76,7 +136,8 @@ static void get_datas(GtkWidget *widget, gpointer data)
       	for (int j = 0; j < num_symbols; j++) 
       	{
       		GtkWidget *state_to_visit = gtk_grid_get_child_at(actual_grid, j + LEFT_COLS, i + HEADER_ROWS);
-      		table[i][j] = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(state_to_visit)) - 1;
+            table[i][j] = get_combobox_value(state_to_visit);
+            
       		g_print("Table[%d][%d]=%d\n", i, j, table[i][j]);
       	}
     }
@@ -91,42 +152,16 @@ static void get_datas(GtkWidget *widget, gpointer data)
 
     set_machine_config(
         table, 
-        entry_data,         // State labels
+        entry_data,         // State tags
         acceptance_states, 
         entry_values,       // Alphabet symbols
         0);                 // Initial state
 
-
-    /*
-    // Post evaluate
-    // 4. Call DFA_driver
-    char *input = "ababbbabbabbaab";
-    int *sequence = createList(strlen(input) + 1);
-    int result = dfa_driver(table, acceptance_states, code, input, 0, sequence);
-    
-    // 4.5 Print sequence and result (optional)
-    g_print("Result: %d\n\n", result);
-    g_print("Sequence:\n");
-    for(int i = 0; i < strlen(input) + 1; i++)
-    {
-    	g_print("\tElement[%d]: %s\n", i, entry_data[sequence[i]]);
-    }
-    
-    
-    // 5. Free memory 
-	free(sequence);
-	freeMatrix(table, num_states);
-	free(acceptance_states);
-	for(int i = 0; i < num_states; i++)
-	{
-		free(entry_data[i]);
-	}
-	free(entry_data);	
-	free(entry_values);
-	*/
 }
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
+
+    free_combo_strings();
 
 	num_states = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(states_spin));
     num_symbols = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(symbols_spin));
@@ -135,7 +170,6 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 	
 	GtkWidget *wdg;
     gchar *text;
-    //GtkAdjustment *adjustment;
     
     // 0. Reset grid widget
 	GList *elements = gtk_container_get_children(GTK_CONTAINER(grid));
@@ -152,8 +186,8 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
         entries[i] = GTK_ENTRY(gtk_entry_new());
         gtk_entry_set_max_length(entries[i], 1);
         gtk_entry_set_text(entries[i], get_char(symbols[i]));
-        gtk_entry_set_alignment(entries[i], 0.5);
-        gtk_widget_set_margin_bottom(GTK_WIDGET(entries[i]), 15);
+        gtk_entry_set_alignment(entries[i], ENTRY_CENTER_ALIGNMENT);
+        gtk_widget_set_margin_bottom(GTK_WIDGET(entries[i]), HEADER_BOTTOM_MARGIN);
 
         gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(entries[i]), i + LEFT_COLS, 0, 1, 1);
     }
@@ -167,11 +201,20 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
       
         text = g_strdup_printf("%d", i + 1);
         wdg = gtk_entry_new_with_buffer(gtk_entry_buffer_new(text, -1));
-        gtk_entry_set_alignment(GTK_ENTRY(wdg), 0.5);
+        gtk_entry_set_max_length(GTK_ENTRY(wdg), MAX_TAGS_LEN);
+        gtk_entry_set_alignment(GTK_ENTRY(wdg), ENTRY_CENTER_ALIGNMENT);
         gtk_grid_attach(GTK_GRID(grid), wdg, 0, i + HEADER_ROWS, 1, 1);
 
+        if (i == 0) {
+            text = g_strdup_printf("<b>%d (START)</b>", i + 1);
+            wdg = gtk_label_new(text);
+            gtk_label_set_markup(GTK_LABEL(wdg), text);
 
-        wdg = gtk_label_new(text);
+        } else {
+            wdg = gtk_label_new(text);
+        }
+
+        gtk_label_set_xalign (GTK_LABEL(wdg), 0.0);
         gtk_grid_attach(GTK_GRID(grid), wdg, 1, i + HEADER_ROWS, 1, 1);
 
         // 3. Build right side column (1 check box)
@@ -182,19 +225,15 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
     
     // 4. Build state x symbol spinbox matrix
-    /*char *combobox_strings[num_states + 1];
 
-    combobox_strings[0] = "-";
+    init_combo_strings();
 
-    for (int i = 0; i < num_states; i++) {
-      combobox_strings[i + 1] = (char *) g_strdup_printf("%d", i + 1);
-    }*/
     for (int i = 0; i < num_states; i++) {
       	for (int j = 0; j < num_symbols; j++) {
 
-          	//wdg = gtk_drop_down_new_from_strings(combobox_strings);
-          	wdg = gtk_spin_button_new_with_range(0, num_states, 1);
+            wdg = create_combobox();
           	gtk_grid_attach(GTK_GRID(grid), wdg, LEFT_COLS + j, i + HEADER_ROWS, 1, 1);
+
       	}
     }
     
@@ -214,7 +253,6 @@ void init_widget_refs() {
     symbols_spin = GTK_WIDGET(gtk_builder_get_object(builder, "symbols_spin"));
 
     ok_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_ok"));
-    // reset_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_reset"));
     eval_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_evaluate"));
 
 	// Attach the callbacks for window, buttons and other controls

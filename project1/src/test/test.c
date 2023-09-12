@@ -72,5 +72,5 @@ void testingDFA()
    	
    	free(accept);
    	free(sequence);
-   	freeMatrix(table, rows);
+   	freeMatrix((void**)table, rows);
 }
