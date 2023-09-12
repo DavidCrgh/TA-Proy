@@ -1,3 +1,4 @@
+#include <gdk/gdk.h>
 #ifndef SETUP_UI_H
 #define SETUP_UI_H
 

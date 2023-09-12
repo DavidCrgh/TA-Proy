@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "setup_ui.h"
+#include "evaluation_ui.h"
 #include "../logic/common.h"
 #include "../logic/matrix.h"
 #include "../logic/dfa.h"
@@ -26,11 +27,16 @@ GtkWidget *symbols_spin;
 GtkWidget *ok_button;
 GtkWidget *reset_button;
 GtkWidget *eval_button;
+GtkWidget *quit_button;
 
 GError *error = NULL;
 
-
 ///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
+
+void next_window(){
+    gtk_widget_destroy(window);
+    init_gui_eval();
+}
 
 static void get_datas(GtkWidget *widget, gpointer data)
 {
@@ -95,7 +101,7 @@ static void get_datas(GtkWidget *widget, gpointer data)
         entry_values,       // Alphabet symbols
         0);                 // Initial state
 
-
+    next_window();
     /*
     // Post evaluate
     // 4. Call DFA_driver
@@ -124,6 +130,12 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	free(entry_values);
 	*/
 }
+
+static void quit_clicked(GtkButton * b, gpointer data) {
+    gtk_widget_destroy(window);
+}
+
+
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
@@ -215,9 +227,11 @@ void init_widget_refs() {
     ok_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_ok"));
     // reset_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_reset"));
     eval_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_evaluate"));
+    quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_quit"));
 
 	// Attach the callbacks for window, buttons and other controls
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
+    g_signal_connect(quit_button, "clicked", G_CALLBACK (quit_clicked), NULL);
     g_signal_connect(eval_button, "clicked", G_CALLBACK (get_datas), NULL);
     g_signal_connect(ok_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
     
@@ -245,3 +259,4 @@ int init_gui(int argc, char *argv[]) {
 
     return OK;
 }
+
