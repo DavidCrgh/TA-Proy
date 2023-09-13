@@ -62,6 +62,7 @@
               <object class="GtkEntry" id="string_entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="max_length">6350</property>
               </object>
               <packing>
                 <property name="expand">False</property>

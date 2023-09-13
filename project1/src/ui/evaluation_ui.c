@@ -44,13 +44,17 @@ int init_gui_eval() {
     return OK;
 }
 
+void toString() {
+
+}
+
 void on_reset_button_clicked(GtkButton * b) {
     gtk_label_set_text(GTK_LABEL(final_state_label), "");
     gtk_label_set_text(GTK_LABEL(states_route_label), "");
     gtk_entry_set_text(GTK_ENTRY(string_entry), "");
 }
 
-void on_evaluate_button_clicked(GtkButton * b) {
+void displayResults(){
     char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
     strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
 
@@ -60,10 +64,6 @@ void on_evaluate_button_clicked(GtkButton * b) {
     
     g_print("Result: %d\n\n", result);
     g_print("Sequence:\n");
-    for(int i = 0; i < strlen(input) + 1; i++)
-    {
-    	g_print("\tElement[%d]: %d\n", i, sequence[i]);
-    }
 
     if(result == 1) {
         gtk_label_set_text(GTK_LABEL(final_state_label), "Accepted");
@@ -71,7 +71,22 @@ void on_evaluate_button_clicked(GtkButton * b) {
         gtk_label_set_text(GTK_LABEL(final_state_label), "Rejected");
     }
 
-    //gtk_label_set_text(GTK_LABEL(states_route_label), sequence);
+    char states_route[(strlen(input) + 1)*20];
+    int i=0;
+    int index = 0;
+
+    char **state_labels = get_state_labels();
+
+    for (i=0; i < strlen(input) + 1; i++) {
+        g_print("\tElement[%d]: %s\n", i, state_labels[sequence[i]]);
+        index += sprintf(&states_route[index], "%s\n", state_labels[sequence[i]]);
+    }
+        
+    gtk_label_set_text(GTK_LABEL(states_route_label), states_route);
+}
+
+void on_evaluate_button_clicked(GtkButton * b) {
+    displayResults();
 }
 
 void on_quit_button_clicked(GtkButton * b) {
