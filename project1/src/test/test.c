@@ -31,9 +31,8 @@ void testingDFA()
 	fillListRandom(accept, rows, 0, 1);
 	fillMatrixRandom(table, rows, columns, -1, rows - 1);
 	
-	
-	
 	int result = dfa_driver(table, accept, code, input, 0, sequence);
+	//int result = execute_machine(input, sequence);
    	
    	// Print matrix
    	printf("Print matrix:");

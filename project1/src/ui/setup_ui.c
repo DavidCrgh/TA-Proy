@@ -41,9 +41,14 @@ GError *error = NULL;
 
 ///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
 
-void next_window(){
+static void next_window(){
     gtk_widget_destroy(window);
     init_gui_eval();
+}
+
+
+static void quit_clicked(GtkButton * b, gpointer data) {
+    gtk_widget_destroy(window);
 }
 
 static void free_combo_strings() {
@@ -159,33 +164,6 @@ static void get_datas(GtkWidget *widget, gpointer data)
         0);                 // Initial state
 
     next_window();
-    /*
-    // Post evaluate
-    // 4. Call DFA_driver
-    char *input = "ababbbabbabbaab";
-    int *sequence = createList(strlen(input) + 1);
-    int result = dfa_driver(table, acceptance_states, code, input, 0, sequence);
-    
-    // 4.5 Print sequence and result (optional)
-    g_print("Result: %d\n\n", result);
-    g_print("Sequence:\n");
-    for(int i = 0; i < strlen(input) + 1; i++)
-    {
-    	g_print("\tElement[%d]: %s\n", i, entry_data[sequence[i]]);
-    }
-    
-    
-    // 5. Free memory 
-	free(sequence);
-	freeMatrix(table, num_states);
-	free(acceptance_states);
-	for(int i = 0; i < num_states; i++)
-	{
-		free(entry_data[i]);
-	}
-	free(entry_data);	
-	free(entry_values);
-	*/
 }
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {

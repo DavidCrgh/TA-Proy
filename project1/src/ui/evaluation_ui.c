@@ -6,6 +6,7 @@
 #include "../logic/common.h"
 #include "../logic/matrix.h"
 #include "../logic/dfa.h"
+#include "../logic/list.h"
 #include "../logic/controller.h"
 #include "../test/test.h"
 
@@ -53,13 +54,14 @@ void on_reset_button_clicked(GtkButton * b) {
 void display_results(){
     char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
     strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
+    int len_input = strlen(input);
 
-    int *sequence = createList(strlen(input) + 1);
+    int *sequence = (int*)createList(len_input + 1, sizeof(int));
+    fillList(sequence, len_input + 1);
 
     int result = execute_machine(input, sequence);
     
     g_print("Result: %d\n\n", result);
-    g_print("Sequence:\n");
 
     if(result == 1) {
         gtk_label_set_text(GTK_LABEL(final_state_label), "Accepted");
@@ -68,12 +70,11 @@ void display_results(){
     }
 
     char states_route[(strlen(input) + 1)*20];
-    int i=0;
     int index = 0;
 
     char **state_labels = get_state_labels();
 
-    for (i=0; i < strlen(input) + 1; i++) {
+    for (int i=0; i < strlen(input) + 1; i++) {
         g_print("\tElement[%d]: %s\n", i, state_labels[sequence[i]]);
         index += sprintf(&states_route[index], "%s\n", state_labels[sequence[i]]);
     }
@@ -97,11 +98,10 @@ void on_string_entry_insert_text(
                         gpointer data) 
 {
     GtkEditable *editable = GTK_EDITABLE (entry);
-    int i, count=0;
+    int i, count = 0;
     gchar *result = g_new (gchar, length);
 
     char *alphabet = get_symbols();
-
 
     for (i=0; i < length; i++)
     {
