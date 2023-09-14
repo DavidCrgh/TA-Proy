@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "setup_ui.h"
+#include "evaluation_ui.h"
 #include "../logic/common.h"
 #include "../logic/matrix.h"
 #include "../logic/list.h"
@@ -32,13 +33,18 @@ GtkWidget *symbols_spin;
 GtkWidget *ok_button;
 GtkWidget *reset_button;
 GtkWidget *eval_button;
+GtkWidget *quit_button;
 
 char **combo_strings = NULL;
 
 GError *error = NULL;
 
-
 ///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
+
+void next_window(){
+    gtk_widget_destroy(window);
+    init_gui_eval();
+}
 
 static void free_combo_strings() {
     if (combo_strings != NULL) {
@@ -152,6 +158,34 @@ static void get_datas(GtkWidget *widget, gpointer data)
         entry_values,       // Alphabet symbols
         0);                 // Initial state
 
+    next_window();
+    /*
+    // Post evaluate
+    // 4. Call DFA_driver
+    char *input = "ababbbabbabbaab";
+    int *sequence = createList(strlen(input) + 1);
+    int result = dfa_driver(table, acceptance_states, code, input, 0, sequence);
+    
+    // 4.5 Print sequence and result (optional)
+    g_print("Result: %d\n\n", result);
+    g_print("Sequence:\n");
+    for(int i = 0; i < strlen(input) + 1; i++)
+    {
+    	g_print("\tElement[%d]: %s\n", i, entry_data[sequence[i]]);
+    }
+    
+    
+    // 5. Free memory 
+	free(sequence);
+	freeMatrix(table, num_states);
+	free(acceptance_states);
+	for(int i = 0; i < num_states; i++)
+	{
+		free(entry_data[i]);
+	}
+	free(entry_data);	
+	free(entry_values);
+	*/
 }
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
@@ -248,9 +282,11 @@ void init_widget_refs() {
 
     ok_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_ok"));
     eval_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_evaluate"));
+    quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_quit"));
 
 	// Attach the callbacks for window, buttons and other controls
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
+    g_signal_connect(quit_button, "clicked", G_CALLBACK (quit_clicked), NULL);
     g_signal_connect(eval_button, "clicked", G_CALLBACK (get_datas), NULL);
     g_signal_connect(ok_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
     

@@ -64,3 +64,11 @@ int execute_machine(char *input, int *sequence) {
         sequence
     );
 }
+
+char **get_state_labels() {
+    return config->labels;
+}
+
+char *get_symbols() {
+    return config->symbols;
+}
