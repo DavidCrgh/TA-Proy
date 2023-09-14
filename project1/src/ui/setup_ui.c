@@ -259,4 +259,3 @@ int init_gui(int argc, char *argv[]) {
 
     return OK;
 }
-

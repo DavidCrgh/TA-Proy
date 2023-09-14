@@ -63,6 +63,13 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="max_length">6350</property>
+                <property name="primary_icon_stock">gtk-edit</property>
+                <property name="secondary_icon_activatable">False</property>
+                <property name="secondary_icon_sensitive">False</property>
+                <property name="secondary_icon_tooltip_text" translatable="yes">
+</property>
+                <property name="primary_icon_tooltip_markup" translatable="yes">Max string size 6350</property>
+                <signal name="insert-text" handler="on_string_entry_insert_text" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

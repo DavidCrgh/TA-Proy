@@ -44,17 +44,13 @@ int init_gui_eval() {
     return OK;
 }
 
-void toString() {
-
-}
-
 void on_reset_button_clicked(GtkButton * b) {
     gtk_label_set_text(GTK_LABEL(final_state_label), "");
     gtk_label_set_text(GTK_LABEL(states_route_label), "");
     gtk_entry_set_text(GTK_ENTRY(string_entry), "");
 }
 
-void displayResults(){
+void display_results(){
     char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
     strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
 
@@ -86,9 +82,43 @@ void displayResults(){
 }
 
 void on_evaluate_button_clicked(GtkButton * b) {
-    displayResults();
+    display_results();
 }
 
 void on_quit_button_clicked(GtkButton * b) {
     gtk_widget_destroy(GTK_WIDGET(evaluation_window));
+}
+
+void on_string_entry_insert_text(
+                        GtkEntry *entry,
+                        const gchar *text,
+                        gint length,
+                        gint *position,
+                        gpointer data) 
+{
+    GtkEditable *editable = GTK_EDITABLE (entry);
+    int i, count=0;
+    gchar *result = g_new (gchar, length);
+
+    char *alphabet = get_symbols();
+
+
+    for (i=0; i < length; i++)
+    {
+        //Verify if the char is in the alphabet
+        if (!strchr(alphabet, text[i]))
+            continue;
+        result[count++] = text[i];
+    }
+
+    if (count > 0)
+    {
+        g_signal_handlers_block_by_func(G_OBJECT (editable), G_CALLBACK (on_string_entry_insert_text), data);
+        gtk_editable_insert_text(editable, result, count, position);
+        
+        g_signal_handlers_unblock_by_func(G_OBJECT (editable), G_CALLBACK (on_string_entry_insert_text), data);
+    }
+
+    g_signal_stop_emission_by_name(G_OBJECT (editable), "insert_text");
+    g_free (result);
 }
