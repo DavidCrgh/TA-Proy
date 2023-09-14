@@ -10,16 +10,16 @@
 #include "../logic/controller.h"
 #include "../test/test.h"
 
-GtkBuilder *builder;
+static GtkBuilder *builder;
 
-GtkWidget *evaluation_window;
-GtkWidget *evaluate_button;
-GtkWidget *final_state_label;
-GtkWidget *quit_button;
-GtkWidget *reset_button;
-GtkWidget *simulate_button;
-GtkWidget *states_route_label;
-GtkWidget *string_entry;
+static GtkWidget *evaluation_window;
+static GtkWidget *evaluate_button;
+static GtkWidget *final_state_label;
+static GtkWidget *quit_button;
+static GtkWidget *reset_button;
+static GtkWidget *simulate_button;
+static GtkWidget *states_route_label;
+static GtkWidget *string_entry;
 
 void init_widgets() {
     evaluation_window = GTK_WIDGET(gtk_builder_get_object(builder, "evaluation_window"));

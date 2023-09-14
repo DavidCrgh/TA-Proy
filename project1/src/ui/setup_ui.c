@@ -21,19 +21,18 @@
 #define ENTRY_CENTER_ALIGNMENT 0.5
 
 // Global vars for widget refs
-GtkBuilder *builder;
+static GtkBuilder *builder;
 
-GtkWidget *window;
+static GtkWidget *window;
 
-GtkWidget *grid;
+static GtkWidget *grid;
 
-GtkWidget *states_spin;
-GtkWidget *symbols_spin;
+static GtkWidget *states_spin;
+static GtkWidget *symbols_spin;
 
-GtkWidget *ok_button;
-GtkWidget *reset_button;
-GtkWidget *eval_button;
-GtkWidget *quit_button;
+static GtkWidget *ok_button;
+static GtkWidget *eval_button;
+static GtkWidget *quit_button;
 
 char **combo_strings = NULL;
 
@@ -99,7 +98,7 @@ static int get_combobox_value(GtkWidget *cb) {
     int selected_item = gtk_combo_box_get_active(GTK_COMBO_BOX(cb));
     gchar *text = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(cb));
 
-    return (selected_item == 0 ? -1 : atoi(text));
+    return (selected_item == 0 ? -1 : atoi(text) - 1);
 
 }
 

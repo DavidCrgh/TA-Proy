@@ -25,7 +25,8 @@ int dfa_driver(
 		k = table[k][code(*s++)];
 	}
 	sequence[i] = k;
-	return (accept[k-1]);
+
+	return (k == -1 ? 0 : accept[k]);
 }
 
 int code(char c)
