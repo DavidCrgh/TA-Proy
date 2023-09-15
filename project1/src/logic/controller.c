@@ -58,6 +58,7 @@ int execute_machine(char *input, int *sequence) {
     return dfa_driver(
         config->table,
         config->accept,
+        config->symbols,
         code,
         input,
         config->first_state,

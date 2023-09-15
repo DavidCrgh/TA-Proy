@@ -6,7 +6,8 @@
 int dfa_driver(
 	int **table,
 	int *accept,
-	int (*code) (char c),
+	char *symbols,
+	int (*code) (char c, char *symbols),
 	char *string,
 	int state,
 	int *sequence)
@@ -22,14 +23,14 @@ int dfa_driver(
 	while (*s && k != -1)
 	{
 		sequence[i++] = k;
-		k = table[k][code(*s++)];
+		k = table[k][code(*s++, symbols)];
 	}
 	sequence[i] = k;
 
 	return (k == -1 ? 0 : accept[k]);
 }
 
-int code(char c)
+int code(char c, char *symbols)
 {
 	char *pos = strchr(symbols, c);
 	return pos - symbols;

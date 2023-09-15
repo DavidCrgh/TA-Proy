@@ -20,6 +20,9 @@
 #define HEADER_BOTTOM_MARGIN 15
 #define ENTRY_CENTER_ALIGNMENT 0.5
 
+// Variable for alphabet
+char* symbols_ui = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 // Global vars for widget refs
 static GtkBuilder *builder;
 
@@ -102,22 +105,59 @@ static int get_combobox_value(GtkWidget *cb) {
 
 }
 
+static void call_message_box(char *message)
+{
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+														GTK_DIALOG_MODAL,
+														GTK_MESSAGE_INFO,
+														GTK_BUTTONS_OK,
+														"%s", message);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
+static char *get_alphabet_from_table(GtkGrid *actual_grid)
+{
+	char *entry_values = (char *) createList(num_symbols + 1, sizeof(char));
+	for(int i = 0; i < num_symbols; i++)
+	{
+		GtkWidget *header_symbol = gtk_grid_get_child_at(actual_grid, i + LEFT_COLS, 0);
+		char *symbol;
+		char message[100];
+		symbol = strdup(gtk_entry_get_text(GTK_ENTRY(header_symbol)));
+		if(symbol[0] == '\0')
+		{
+			sprintf(message, "There is no symbol on column %d", i + 1);
+			call_message_box(message);
+			return NULL;
+		}
+		else
+		{
+			char *ch = strchr(entry_values, symbol[0]);
+			if(ch != NULL)
+			{
+				sprintf(message, "The symbol '%s' is repeated in the table", symbol);
+				call_message_box(message);
+				return NULL;
+			}
+			if (i == 0)
+				strcpy(entry_values, gtk_entry_get_text(GTK_ENTRY(header_symbol)));
+			else
+				strcat(entry_values, gtk_entry_get_text(GTK_ENTRY(header_symbol)));	
+		}
+	}
+	return entry_values;
+}
+
 static void get_datas(GtkWidget *widget, gpointer data)
 {
 	GtkGrid *actual_grid = GTK_GRID(grid);
 
 	// Get configuration for automaton
 	// 1. Get data of headers row
-	char *entry_values = (char *) createList(num_symbols + 1, sizeof(char));
-	for(int i = 0; i < num_symbols; i++)
-	{
-		GtkWidget *header_symbol = gtk_grid_get_child_at(actual_grid, i + LEFT_COLS, 0);
-		if (i == 0)
-			strcpy(entry_values, gtk_entry_get_text(GTK_ENTRY(header_symbol)));
-		else
-			strcat(entry_values, gtk_entry_get_text(GTK_ENTRY(header_symbol)));
-	}
-	
+	char *entry_values = get_alphabet_from_table(actual_grid);
+	if(entry_values == NULL)
+		return;
 	
 	// 2. Get state tags and acceptance states
 	char **entry_data = (char **) createMatrix(num_states, 30, sizeof(char *));
@@ -190,7 +230,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
     for (int i = 0; i < num_symbols; i++) {
         entries[i] = GTK_ENTRY(gtk_entry_new());
         gtk_entry_set_max_length(entries[i], 1);
-        gtk_entry_set_text(entries[i], get_char(symbols[i]));
+        gtk_entry_set_text(entries[i], get_char(symbols_ui[i]));
         gtk_entry_set_alignment(entries[i], ENTRY_CENTER_ALIGNMENT);
         gtk_widget_set_margin_bottom(GTK_WIDGET(entries[i]), HEADER_BOTTOM_MARGIN);
 

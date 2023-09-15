@@ -13,7 +13,7 @@ void testingDFA()
 	srand(time(NULL));
 	
 	
-	symbols = "ACGT";
+	char *symbols = "ACGT";
 	char *input = "CGGA";
 	
 	int rows = 4;
@@ -31,7 +31,7 @@ void testingDFA()
 	fillListRandom(accept, rows, 0, 1);
 	fillMatrixRandom(table, rows, columns, -1, rows - 1);
 	
-	int result = dfa_driver(table, accept, code, input, 0, sequence);
+	int result = dfa_driver(table, accept, symbols, code, input, 0, sequence);
 	//int result = execute_machine(input, sequence);
    	
    	// Print matrix

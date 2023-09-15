@@ -5,7 +5,6 @@
 
 int num_states = 0;
 int num_symbols = 0;
-char* symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 void errorMessage(char *message)
 {
