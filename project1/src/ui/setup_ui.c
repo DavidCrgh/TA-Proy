@@ -66,7 +66,6 @@ static void free_combo_strings() {
     }
 }
 
-
 static void init_combo_strings() {
 
 

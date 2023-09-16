@@ -129,8 +129,6 @@
               <object class="GtkViewport">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">start</property>
                 <child>
                   <!-- n-columns=3 n-rows=4 -->
                   <object class="GtkGrid" id="results_grid">

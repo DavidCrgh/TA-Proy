@@ -8,14 +8,9 @@
 #include "../logic/list.h"
 #include "../logic/controller.h"
 
-#define HEADER_ROWS 4
 #define LEFT_COLS 0
-#define RIGHT_COLS 1
-
-#define MAX_TAGS_LEN  20
-#define MAX_CB_STRING_LEN 10
-#define HEADER_BOTTOM_MARGIN 15
-#define ENTRY_CENTER_ALIGNMENT 0.5
+#define LABEL_MARGIN 15
+#define EPSILON "\u03B5"
 
 static GtkBuilder *builder;
 
@@ -28,9 +23,14 @@ static GtkWidget *quit_button;
 static GtkWidget *reset_button;
 static GtkWidget *string_entry;
 
-static void build_transition_grid(GtkWidget *widget, gpointer data) {
-    gchar *text;
+void set_label_margins(GtkLabel *label, int margin){
+    gtk_widget_set_margin_top(GTK_WIDGET(label), margin);
+    gtk_widget_set_margin_bottom(GTK_WIDGET(label), margin);
+    gtk_widget_set_margin_start(GTK_WIDGET(label), margin);
+    gtk_widget_set_margin_end(GTK_WIDGET(label), margin);
+}
 
+static void build_transition_grid(GtkWidget *widget, gpointer data) {
 	GList *elements = gtk_container_get_children(GTK_CONTAINER(grid));
 
     GList *iterator;
@@ -39,77 +39,96 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
     }
     g_list_free(elements);
 
+    char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
+    strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
+    int len_input = strlen(input);
+
+    int *sequence = (int*)createList(len_input + 1, sizeof(int));
+    fillList(sequence, len_input + 1);
+
+    int result = execute_machine(input, sequence);
+    
+    g_print("Result: %d\n\n", result);
+
+    
+    //Add labels and headers to the grid
     GtkLabel *acceptance_label = GTK_LABEL(gtk_label_new(NULL));
-    gtk_label_set_markup(GTK_LABEL(acceptance_label), "<b>Acceptance final state</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(acceptance_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(acceptance_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(acceptance_label), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_label), 2, 1, 1, 1);
+    gtk_label_set_markup(GTK_LABEL(acceptance_label), "<b>Acceptance state</b>");
+    set_label_margins(acceptance_label, LABEL_MARGIN);
 
     GtkLabel *acceptance_result_label = GTK_LABEL(gtk_label_new(NULL));
-    gtk_label_set_markup(GTK_LABEL(acceptance_result_label), "<b>Accepted</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(acceptance_result_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(acceptance_result_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(acceptance_result_label), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_result_label), 2, 2, 1, 1);
+    set_label_margins(acceptance_result_label, LABEL_MARGIN);
+    
 
     GtkLabel *route_label = GTK_LABEL(gtk_label_new(NULL));
     gtk_label_set_markup(GTK_LABEL(route_label), "<b>Route</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(route_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(route_label), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(route_label), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(route_label), 2, 3, 1, 1);
+    set_label_margins(route_label, LABEL_MARGIN);
 
-    //Header's labels
     GtkLabel *header_labels[3];
 
     header_labels[0] = GTK_LABEL(gtk_label_new(NULL));
-    gtk_label_set_markup(GTK_LABEL(header_labels[0]), "<b>Current State</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(header_labels[0]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(header_labels[0]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(header_labels[0]), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[0]), LEFT_COLS, HEADER_ROWS, 1, 1);
+    gtk_label_set_markup(GTK_LABEL(header_labels[0]), "<b>Current state</b>");
+    set_label_margins(header_labels[0], LABEL_MARGIN);
 
     header_labels[1] = GTK_LABEL(gtk_label_new(NULL));
     gtk_label_set_markup(GTK_LABEL(header_labels[1]), "<b>Symbol</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(header_labels[1]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(header_labels[1]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(header_labels[1]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_bottom(GTK_WIDGET(header_labels[1]), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[1]), 1 + LEFT_COLS, HEADER_ROWS, 1, 1);
+    set_label_margins(header_labels[1], LABEL_MARGIN);
 
     header_labels[2] = GTK_LABEL(gtk_label_new(NULL));
     gtk_label_set_markup(GTK_LABEL(header_labels[2]), "<b>Next state</b>");
-    gtk_widget_set_margin_bottom(GTK_WIDGET(header_labels[2]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_end(GTK_WIDGET(header_labels[2]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_top(GTK_WIDGET(header_labels[2]), HEADER_BOTTOM_MARGIN);
-    gtk_widget_set_margin_bottom(GTK_WIDGET(header_labels[2]), HEADER_BOTTOM_MARGIN);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[2]), 2 + LEFT_COLS, HEADER_ROWS, 1, 1);
-
-    GtkLabel *current_state_labels[10];
-    GtkLabel *symbols_labels[10];
-    GtkLabel *next_state_labels[10];
-
-    for (int i = 0; i < 10; i++) {
-        text = g_strdup_printf("%d", i);
-        current_state_labels[i] = GTK_LABEL(gtk_label_new(text));
-        gtk_widget_set_margin_bottom(GTK_WIDGET(current_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_end(GTK_WIDGET(current_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_top(GTK_WIDGET(current_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(current_state_labels[i]), LEFT_COLS, HEADER_ROWS + i + 1, 1, 1);
-
-        symbols_labels[i] = GTK_LABEL(gtk_label_new(text));
-        gtk_widget_set_margin_bottom(GTK_WIDGET(symbols_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_end(GTK_WIDGET(symbols_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_top(GTK_WIDGET(symbols_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(symbols_labels[i]), LEFT_COLS + 1, HEADER_ROWS + i + 1, 1, 1);
+    set_label_margins(header_labels[2], LABEL_MARGIN);
 
 
-        next_state_labels[i] = GTK_LABEL(gtk_label_new(text));
-        gtk_widget_set_margin_bottom(GTK_WIDGET(next_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_end(GTK_WIDGET(next_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_widget_set_margin_top(GTK_WIDGET(next_state_labels[i]), HEADER_BOTTOM_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(next_state_labels[i]), LEFT_COLS + 2, HEADER_ROWS + i + 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_label), 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_result_label), 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(route_label), 1, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[0]), LEFT_COLS, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[1]), 1 + LEFT_COLS, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[2]), 2 + LEFT_COLS, 4, 1, 1);
+
+    //Display result
+    if(result == 1) {
+        gtk_label_set_text(GTK_LABEL(acceptance_result_label), "Accepted");
+    } else {
+        gtk_label_set_text(GTK_LABEL(acceptance_result_label), "Rejected");
+    }
+
+    int number_states = strlen(input) + 2;
+
+    GtkLabel *current_state_labels[number_states];
+    GtkLabel *symbols_labels[number_states];
+    GtkLabel *next_state_labels[number_states];
+
+    char **state_labels = get_state_labels();
+    gchar *text;
+    
+    for (int i = 0; i < number_states; i++) {
+        if(i == 0){
+            current_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
+        } else {
+            current_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i-1]]));
+        }
+        set_label_margins(current_state_labels[i], LABEL_MARGIN);
+        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(current_state_labels[i]), LEFT_COLS, 4 + i + 1, 1, 1);
+
+        if(i == 0){
+            symbols_labels[i] = GTK_LABEL(gtk_label_new(EPSILON));
+        } else if(i == (number_states - 1)){
+            symbols_labels[i] = GTK_LABEL(gtk_label_new("-"));
+        } else {
+            text = g_strdup_printf("%c", input[i-1]);
+            symbols_labels[i] = GTK_LABEL(gtk_label_new(text));
+        }
+        set_label_margins(symbols_labels[i], LABEL_MARGIN);
+        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(symbols_labels[i]), LEFT_COLS + 1, 4 + i + 1, 1, 1);
+
+        if(i < (number_states - 1)){
+            next_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i]]));
+        } else {
+            next_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
+        }
+        set_label_margins(next_state_labels[i], LABEL_MARGIN);
+        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(next_state_labels[i]), LEFT_COLS + 2, 4 + i + 1, 1, 1);
     }
     
     gtk_widget_show_all(evaluation_window);
@@ -125,6 +144,7 @@ void init_widgets() {
     string_entry = GTK_WIDGET(gtk_builder_get_object(builder, "string_entry"));
 
     g_signal_connect(evaluate_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
+
 }
 
 int init_gui_eval(GtkWidget *previous_window) {
@@ -169,15 +189,14 @@ void display_results(){
         index += sprintf(&states_route[index], "%s\n", state_labels[sequence[i]]);
     }
         
-    gtk_label_set_text(GTK_LABEL(states_route_label), states_route);
-    //build_transition_grid();
+    //gtk_label_set_text(GTK_LABEL(states_route_label), states_route);
 }
 */
 
 void on_evaluation_window_delete_event(GtkWidget *widget, gpointer data)
 {
 	gtk_widget_destroy(GTK_WIDGET(prev_window));
-	gtk_widget_destroy(GTK_WIDGET(evaluation_window));
+    gtk_widget_destroy(GTK_WIDGET(evaluation_window));
 	exit(EXIT_SUCCESS);
 }
 
@@ -186,8 +205,6 @@ void on_evaluate_button_clicked(GtkButton * b) {
 }
 
 void on_reset_button_clicked(GtkButton * b) {
-    //gtk_label_set_text(GTK_LABEL(final_state_label), "");
-    //gtk_label_set_text(GTK_LABEL(states_route_label), "");
     gtk_entry_set_text(GTK_ENTRY(string_entry), "");
 }
 
