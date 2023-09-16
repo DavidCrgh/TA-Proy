@@ -79,6 +79,7 @@ void display_results(){
 
 void on_evaluation_window_delete_event(GtkWidget *widget, gpointer data)
 {
+	free_config();
 	gtk_widget_destroy(GTK_WIDGET(prev_window));
 	gtk_widget_destroy(GTK_WIDGET(evaluation_window));
 	exit(EXIT_SUCCESS);
