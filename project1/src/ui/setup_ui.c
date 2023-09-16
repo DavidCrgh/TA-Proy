@@ -35,7 +35,7 @@ static GtkWidget *symbols_spin;
 
 static GtkWidget *ok_button;
 static GtkWidget *eval_button;
-static GtkWidget *quit_button;
+static GtkWidget *setup_quit_button;
 
 char **combo_strings = NULL;
 
@@ -304,11 +304,11 @@ void init_widget_refs() {
 
     ok_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_ok"));
     eval_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_evaluate"));
-    quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_quit"));
+    setup_quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_quit"));
 
 	// Attach the callbacks for window, buttons and other controls
     g_signal_connect(G_OBJECT(window), "delete-event", G_CALLBACK (on_window_delete_event), NULL);
-    g_signal_connect(quit_button, "clicked", G_CALLBACK (quit_clicked), NULL);
+    g_signal_connect(setup_quit_button, "clicked", G_CALLBACK (quit_clicked), NULL);
     g_signal_connect(eval_button, "clicked", G_CALLBACK (get_datas), NULL);
     g_signal_connect(ok_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
     

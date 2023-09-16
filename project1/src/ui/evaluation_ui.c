@@ -12,12 +12,12 @@
 #define LABEL_MARGIN 15
 #define EPSILON "\u03B5"
 
-static GtkBuilder *builder;
+static GtkBuilder *builder_eval;
 
 static GtkWidget *back_button;
 static GtkWidget *evaluation_window;
 static GtkWidget *evaluate_button;
-static GtkWidget *grid;
+static GtkWidget *evaluation_grid;
 static GtkWidget *prev_window;
 static GtkWidget *quit_button;
 static GtkWidget *reset_button;
@@ -30,14 +30,17 @@ void set_label_margins(GtkLabel *label, int margin){
     gtk_widget_set_margin_end(GTK_WIDGET(label), margin);
 }
 
-static void build_transition_grid(GtkWidget *widget, gpointer data) {
-	GList *elements = gtk_container_get_children(GTK_CONTAINER(grid));
+void cleanGrid(GtkWidget *widget, gpointer data){
+    GList *elements = gtk_container_get_children(GTK_CONTAINER(evaluation_grid));
 
     GList *iterator;
     for (iterator = elements; iterator != NULL; iterator = g_list_next(iterator)) {
         gtk_widget_destroy(GTK_WIDGET(iterator->data));
     }
     g_list_free(elements);
+}
+static void build_transition_grid(GtkWidget *widget, gpointer data) {
+	cleanGrid(widget, data);
 
     char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
     strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
@@ -48,10 +51,7 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
     int result = execute_machine(input, sequence);
     
-    g_print("Result: %d\n\n", result);
-
-    
-    //Add labels and headers to the grid
+    //Add labels and headers to the evaluation_grid
     GtkLabel *acceptance_label = GTK_LABEL(gtk_label_new(NULL));
     gtk_label_set_markup(GTK_LABEL(acceptance_label), "<b>Acceptance state</b>");
     set_label_margins(acceptance_label, LABEL_MARGIN);
@@ -79,12 +79,12 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
     set_label_margins(header_labels[2], LABEL_MARGIN);
 
 
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_label), 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(acceptance_result_label), 1, 2, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(route_label), 1, 3, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[0]), LEFT_COLS, 4, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[1]), 1 + LEFT_COLS, 4, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(header_labels[2]), 2 + LEFT_COLS, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(acceptance_label), 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(acceptance_result_label), 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(route_label), 1, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(header_labels[0]), LEFT_COLS, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(header_labels[1]), 1 + LEFT_COLS, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(header_labels[2]), 2 + LEFT_COLS, 4, 1, 1);
 
     //Display result
     if(result == 1) {
@@ -103,13 +103,17 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
     gchar *text;
     
     for (int i = 0; i < number_states; i++) {
-        if(i == 0){
-            current_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
+        if(sequence[i-1] >= 0){
+            if(i == 0){
+                current_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
+            } else {
+                current_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i-1]]));
+            }
         } else {
-            current_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i-1]]));
+            current_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
         }
         set_label_margins(current_state_labels[i], LABEL_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(current_state_labels[i]), LEFT_COLS, 4 + i + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(current_state_labels[i]), LEFT_COLS, 4 + i + 1, 1, 1);
 
         if(i == 0){
             symbols_labels[i] = GTK_LABEL(gtk_label_new(EPSILON));
@@ -120,28 +124,32 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
             symbols_labels[i] = GTK_LABEL(gtk_label_new(text));
         }
         set_label_margins(symbols_labels[i], LABEL_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(symbols_labels[i]), LEFT_COLS + 1, 4 + i + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(symbols_labels[i]), LEFT_COLS + 1, 4 + i + 1, 1, 1);
 
-        if(i < (number_states - 1)){
-            next_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i]]));
+        if(sequence[i] >= 0){
+            if(i < (number_states - 1)){
+                next_state_labels[i] = GTK_LABEL(gtk_label_new(state_labels[sequence[i]]));
+            } else {
+                next_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
+            }
         } else {
             next_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
         }
         set_label_margins(next_state_labels[i], LABEL_MARGIN);
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(next_state_labels[i]), LEFT_COLS + 2, 4 + i + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(evaluation_grid), GTK_WIDGET(next_state_labels[i]), LEFT_COLS + 2, 4 + i + 1, 1, 1);
     }
     
     gtk_widget_show_all(evaluation_window);
 }
 
 void init_widgets() {
-    back_button = GTK_WIDGET(gtk_builder_get_object(builder, "back_button"));
-    evaluation_window = GTK_WIDGET(gtk_builder_get_object(builder, "evaluation_window"));
-    evaluate_button = GTK_WIDGET(gtk_builder_get_object(builder, "evaluate_button"));
-    grid = GTK_WIDGET(gtk_builder_get_object(builder, "results_grid"));
-    quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "finish_button"));
-    reset_button = GTK_WIDGET(gtk_builder_get_object(builder, "reset_button"));
-    string_entry = GTK_WIDGET(gtk_builder_get_object(builder, "string_entry"));
+    back_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "back_button"));
+    evaluation_window = GTK_WIDGET(gtk_builder_get_object(builder_eval, "evaluation_window"));
+    evaluate_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "evaluate_button"));
+    evaluation_grid = GTK_WIDGET(gtk_builder_get_object(builder_eval, "results_grid"));
+    quit_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "finish_button"));
+    reset_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "reset_button"));
+    string_entry = GTK_WIDGET(gtk_builder_get_object(builder_eval, "string_entry"));
 
     g_signal_connect(evaluate_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
 
@@ -149,8 +157,8 @@ void init_widgets() {
 
 int init_gui_eval(GtkWidget *previous_window) {
 	prev_window = previous_window;
-    builder = gtk_builder_new_from_file("src/ui/evaluation.ui");
-    gtk_builder_connect_signals(builder, NULL);
+    builder_eval = gtk_builder_new_from_file("src/ui/evaluation.ui");
+    gtk_builder_connect_signals(builder_eval, NULL);
 
     init_widgets();
     gtk_widget_show(evaluation_window);
@@ -160,39 +168,6 @@ int init_gui_eval(GtkWidget *previous_window) {
     return OK;
 }
 
-/*
-void display_results(){
-    char *input = (char *) malloc(gtk_entry_get_text_length (GTK_ENTRY(string_entry)));;
-    strcpy(input, gtk_entry_get_text(GTK_ENTRY(string_entry)));
-    int len_input = strlen(input);
-
-    int *sequence = (int*)createList(len_input + 1, sizeof(int));
-    fillList(sequence, len_input + 1);
-
-    int result = execute_machine(input, sequence);
-    
-    g_print("Result: %d\n\n", result);
-
-    if(result == 1) {
-        gtk_label_set_text(GTK_LABEL(final_state_label), "Accepted");
-    } else {
-        gtk_label_set_text(GTK_LABEL(final_state_label), "Rejected");
-    }
-
-    char states_route[(strlen(input) + 1)*20];
-    int index = 0;
-
-    char **state_labels = get_state_labels();
-
-    for (int i=0; i < strlen(input) + 1; i++) {
-        g_print("\tElement[%d]: %s\n", i, state_labels[sequence[i]]);
-        index += sprintf(&states_route[index], "%s\n", state_labels[sequence[i]]);
-    }
-        
-    //gtk_label_set_text(GTK_LABEL(states_route_label), states_route);
-}
-*/
-
 void on_evaluation_window_delete_event(GtkWidget *widget, gpointer data)
 {
 	gtk_widget_destroy(GTK_WIDGET(prev_window));
@@ -200,11 +175,8 @@ void on_evaluation_window_delete_event(GtkWidget *widget, gpointer data)
 	exit(EXIT_SUCCESS);
 }
 
-void on_evaluate_button_clicked(GtkButton * b) {
-    //display_results();
-}
-
-void on_reset_button_clicked(GtkButton * b) {
+void on_reset_button_clicked(GtkWidget *widget, gpointer data) {
+    cleanGrid(widget, data);
     gtk_entry_set_text(GTK_ENTRY(string_entry), "");
 }
 
