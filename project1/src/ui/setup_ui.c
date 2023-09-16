@@ -44,13 +44,19 @@ GError *error = NULL;
 ///////////// PRIVATE FUNCTIONS ///////////////////////////////////////////////
 
 static void next_window(){
-    gtk_widget_destroy(window);
-    init_gui_eval();
+    gtk_widget_hide(window);
+    init_gui_eval(window);
+}
+
+static void on_window_delete_event(GtkWidget *widget, gpointer data)
+{
+	gtk_widget_destroy(window);
+	exit(EXIT_SUCCESS);
 }
 
 
 static void quit_clicked(GtkButton * b, gpointer data) {
-    gtk_widget_destroy(window);
+    g_signal_emit_by_name(window, "delete-event");
 }
 
 static void free_combo_strings() {
@@ -302,7 +308,7 @@ void init_widget_refs() {
     quit_button = GTK_WIDGET(gtk_builder_get_object(builder, "setup_quit"));
 
 	// Attach the callbacks for window, buttons and other controls
-    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(window), "delete-event", G_CALLBACK (on_window_delete_event), NULL);
     g_signal_connect(quit_button, "clicked", G_CALLBACK (quit_clicked), NULL);
     g_signal_connect(eval_button, "clicked", G_CALLBACK (get_datas), NULL);
     g_signal_connect(ok_button, "clicked", G_CALLBACK (build_transition_grid), NULL);
