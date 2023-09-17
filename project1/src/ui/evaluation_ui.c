@@ -178,7 +178,6 @@ void on_evaluation_window_delete_event(GtkWidget *widget, gpointer data)
 
 void on_reset_button_clicked(GtkWidget *widget, gpointer data) {
     cleanGrid(widget, data);
-    gtk_entry_set_text(GTK_ENTRY(string_entry), "");
 }
 
 void on_back_button_clicked(GtkButton *b)

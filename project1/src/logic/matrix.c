@@ -4,21 +4,14 @@
 #include "list.h"
 #include "common.h"
 
-void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
-{
-	for (int i = 0; i < row; i++)
-	{
-		for (int j = 0; j < columns; j++)
-		{
-			matrix[i][j] = (rand() % (max - min + 1)) + min;
-		}
-	}
-}
-
+// Method that returns a generic matrix, based on rows, columns and an specific size
+// To use it is necessary to apply a cast of the type that you want to use.
+// Example:
+// 			int **matrix = (int **)createMatrix(rows, columns, size);
 void **createMatrix(int rows, int columns, size_t size)
 {
 	void **matrix;
-	matrix = malloc(rows * sizeof(void *));	// Assign memory for rows
+	matrix = malloc(rows * sizeof(void *));
 	if(matrix == NULL)
 	{
 		errorMessage("Error to assign memory");

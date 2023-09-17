@@ -8,6 +8,25 @@
 #include "../logic/matrix.h"
 #include "../logic/common.h"
 
+void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
+{
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < columns; j++)
+		{
+			matrix[i][j] = (rand() % (max - min + 1)) + min;
+		}
+	}
+}
+
+void fillListRandom(int *list, int total, int min, int max)
+{
+	for(int i = 0; i < total; i++)
+	{
+		list[i] = (rand() % (max - min + 1)) + min;
+	}
+}
+
 void testingDFA()
 {
 	srand(time(NULL));

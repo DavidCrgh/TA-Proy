@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <ctype.h>
 
 #include "setup_ui.h"
 #include "evaluation_ui.h"
@@ -154,6 +155,16 @@ static char *get_alphabet_from_table(GtkGrid *actual_grid)
 	return entry_values;
 }
 
+static int is_empty_entry(char *entry_value)
+{
+	while(*entry_value)
+	{
+		if(!isspace(*entry_value++))
+			return 0;
+	}
+	return 1;
+}
+
 static void get_datas(GtkWidget *widget, gpointer data)
 {
 	GtkGrid *actual_grid = GTK_GRID(grid);
@@ -169,15 +180,21 @@ static void get_datas(GtkWidget *widget, gpointer data)
 	
 	int *acceptance_states = (int *)createList(num_states, sizeof(int));
 	for(int j = 0; j < num_states; j++)
-	{
-		// Tags
-		GtkWidget *wdg = gtk_grid_get_child_at(actual_grid, 0, j + HEADER_ROWS);
-		entry_data[j] = strdup(gtk_entry_get_text(GTK_ENTRY(wdg)));
-		
+	{	
 		// Acceptance
-		wdg = gtk_grid_get_child_at(actual_grid, LEFT_COLS + num_symbols, j + HEADER_ROWS);
+		GtkWidget *wdg = gtk_grid_get_child_at(actual_grid, LEFT_COLS + num_symbols, j + HEADER_ROWS);
 		gboolean checked = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(wdg));
-		acceptance_states[j] = (checked ? 1 : 0); 
+		acceptance_states[j] = (checked ? 1 : 0);
+		
+		// Tags
+		wdg = gtk_grid_get_child_at(actual_grid, 0, j + HEADER_ROWS);
+		char *tag = strdup(gtk_entry_get_text(GTK_ENTRY(wdg)));
+		if(is_empty_entry(tag))
+		{
+			wdg = gtk_grid_get_child_at(actual_grid, 1, j + HEADER_ROWS);
+			tag = strdup(gtk_label_get_text(GTK_LABEL(wdg)));
+		}
+		entry_data[j] = tag;
 	}
 	
 	// 3. Get values from matrix
