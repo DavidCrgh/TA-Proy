@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="evaluation_window">
+    <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">Automata Evaluator</property>
     <property name="default-width">1280</property>
     <property name="default-height">720</property>
+    <signal name="delete-event" handler="on_evaluation_window_delete_event" swapped="no"/>
     <child>
       <object class="GtkPaned">
         <property name="visible">True</property>
@@ -40,14 +42,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkEntry" id="string_entry">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="label" translatable="yes">String to evaluate</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 14"/>
-                </attributes>
+                <property name="can-focus">True</property>
+                <property name="max-length">6350</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="secondary-icon-activatable">False</property>
+                <property name="primary-icon-sensitive">False</property>
+                <property name="secondary-icon-sensitive">False</property>
+                <property name="primary-icon-tooltip-markup" translatable="yes">Max string size 6350</property>
+                <signal name="insert-text" handler="on_string_entry_insert_text" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -56,36 +60,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="string_entry">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="max-length">6350</property>
-                <property name="primary-icon-stock">gtk-edit</property>
-                <property name="secondary-icon-activatable">False</property>
-                <property name="secondary-icon-sensitive">False</property>
-                <property name="secondary-icon-tooltip-text" translatable="yes">
-</property>
-                <property name="primary-icon-tooltip-markup" translatable="yes">Max string size 6350</property>
-                <signal name="insert-text" handler="on_string_entry_insert_text" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="evaluate_button">
                 <property name="label" translatable="yes">EVALUATE</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <signal name="clicked" handler="on_evaluate_button_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -99,7 +83,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -113,7 +97,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -127,7 +111,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">6</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -146,7 +130,8 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkBox">
+                  <!-- n-columns=3 n-rows=4 -->
+                  <object class="GtkGrid" id="results_grid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-left">15</property>
@@ -155,69 +140,43 @@
                     <property name="margin-end">15</property>
                     <property name="margin-top">15</property>
                     <property name="margin-bottom">15</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">10</property>
+                    <property name="row-spacing">10</property>
+                    <property name="column-spacing">10</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="label" translatable="yes">Final state</property>
-                        <attributes>
-                          <attribute name="font-desc" value="Sans Bold 16"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="final_state_label">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <attributes>
-                          <attribute name="font-desc" value="Sans 14"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="label" translatable="yes">State route  </property>
-                        <attributes>
-                          <attribute name="font-desc" value="Sans Bold 16"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="states_route_label">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <attributes>
-                          <attribute name="font-desc" value="Sans 14"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
-                      </packing>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
@@ -231,5 +190,17 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="states_adj">
+    <property name="lower">1</property>
+    <property name="upper">9999999</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="symbols_adj">
+    <property name="lower">1</property>
+    <property name="upper">62</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
 </interface>
