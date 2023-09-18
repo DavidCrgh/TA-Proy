@@ -229,11 +229,17 @@ static void get_datas(GtkWidget *widget, gpointer data)
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
+    num_states = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(states_spin));
+    num_symbols = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(symbols_spin));
+
+    if (num_states * num_symbols > 5580) {
+
+        call_message_box("The selected combination exceeds the UI limit, please choose a lower value (state x symbol < 5580).");
+        return;
+    }
+
     free_combo_strings();
 
-	num_states = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(states_spin));
-    num_symbols = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(symbols_spin));
-    
 	
 	GtkWidget *wdg;
     gchar *text;

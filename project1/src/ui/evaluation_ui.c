@@ -101,8 +101,11 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
     char **state_labels = get_state_labels();
     gchar *text;
-    
-    for (int i = 0; i < number_states; i++) {
+    int flag = 0;
+    for (int i = 0; i < number_states && flag == 0; i++) {
+        if (sequence[i] == -1)
+            flag = 1;
+            
         if(sequence[i-1] >= 0){
             if(i == 0){
                 current_state_labels[i] = GTK_LABEL(gtk_label_new("-"));
