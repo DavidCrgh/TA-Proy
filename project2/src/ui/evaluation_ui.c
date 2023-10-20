@@ -7,6 +7,7 @@
 #include "../logic/matrix.h"
 #include "../logic/list.h"
 #include "../logic/controller.h"
+#include "../pdf/pdfbuilder.h"
 
 #define LEFT_COLS 0
 #define LABEL_MARGIN 15
@@ -19,6 +20,7 @@ static GtkWidget *evaluation_window;
 static GtkWidget *evaluate_button;
 static GtkWidget *evaluation_grid;
 static GtkWidget *prev_window;
+static GtkWidget *print_button;
 static GtkWidget *quit_button;
 static GtkWidget *reset_button;
 static GtkWidget *string_entry;
@@ -150,6 +152,7 @@ void init_widgets() {
     evaluation_window = GTK_WIDGET(gtk_builder_get_object(builder_eval, "evaluation_window"));
     evaluate_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "evaluate_button"));
     evaluation_grid = GTK_WIDGET(gtk_builder_get_object(builder_eval, "results_grid"));
+    print_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "print_button"));
     quit_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "finish_button"));
     reset_button = GTK_WIDGET(gtk_builder_get_object(builder_eval, "reset_button"));
     string_entry = GTK_WIDGET(gtk_builder_get_object(builder_eval, "string_entry"));
@@ -191,6 +194,10 @@ void on_back_button_clicked(GtkButton *b)
 
 void on_quit_button_clicked(GtkButton * b) {
     g_signal_emit_by_name(evaluation_window, "delete-event");
+}
+
+void on_print_button_clicked(GtkButton *b) {
+    build_pdf();
 }
 
 void on_string_entry_insert_text(

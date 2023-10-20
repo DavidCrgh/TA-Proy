@@ -1,0 +1,68 @@
+\documentclass[xcolor=table]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{colortbl}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+
+%------------------------------------------------------------
+\title[Proyecto 1: DFA - Avanzada] %optional
+{Proyecto 1: DFA Avanzada}
+
+\author[ Silvia Calderón, Jorge González, David Valverde]
+{Silvia Calderón, Jorge González, David Valverde}
+
+
+\date[Noviembre 2023] % (optional)
+{Teoría de Autómatas, II semestre 2023}
+
+\logo{\includegraphics[height=0.4cm]{src/pdf/latex/logo-tec.png}}
+
+%------------------------------------------------------------
+
+% Add the table of contents at the beginning of each section
+%\AtBeginSection[]
+%{
+%  \begin{frame}
+%    \frametitle{Tabla de contenidos}
+%    \tableofcontents[currentsection]
+%  \end{frame}
+%}
+
+% Show frame with title at the start of each section
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+%------------------------------------------------------------
+
+% Start the document
+\begin{document}
+
+% Create the title page.
+\frame{\titlepage}
+
+
+%---------------------------------------------------------
+% Table of contents after the title page
+\begin{frame}
+\frametitle{Tabla de contenidos}
+\tableofcontents
+\end{frame}
+%---------------------------------------------------------
+
+
+\section{Aútomata de Estados Finitos (DFA)}
+
+
+% NOTICE THAT THIS FILES DOES NOT HAVE \end{document}, which means this file can't be compiled by itself
+%\end{document}
