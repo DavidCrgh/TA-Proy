@@ -6,6 +6,7 @@ typedef struct edge edge;
 
 struct node
 {
+	int id;
 	char tag[20];
 	edge* edges;
 	node* next;

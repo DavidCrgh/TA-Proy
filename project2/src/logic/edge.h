@@ -7,7 +7,7 @@ typedef struct edge edge;
 
 struct edge
 {
-	char symbol;
+	char symbols[100];
 	node* dest;
 	edge* next;
 };

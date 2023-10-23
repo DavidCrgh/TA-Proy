@@ -49,7 +49,7 @@ void layout(graph* pGraph)
 		edge* actual_edge = actual_node->edges;
 		while(actual_edge != NULL)
 		{
-			printf("  --(%c)--> %s\n", actual_edge->symbol, actual_edge->dest->tag);
+			printf("  --(%s)--> %s\n", actual_edge->symbols, actual_edge->dest->tag);
 			actual_edge = actual_edge->next;
 		}
 		actual_node = actual_node->next;

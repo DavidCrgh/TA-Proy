@@ -1,0 +1,22 @@
+digraph G {
+  rankdir=RL;
+  splines=line;
+  d2tfigpreamble = "\tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20]";
+  node [style="state"];
+  edge [lblstyle="auto",topath="bend left"];
+  q1[style="state,initial,accepting",label="1"];
+  q1->q1 [label="G",topath="loop above"];
+  q1->q2 [label="T"];
+  q1->q3 [label="C"];
+  q1->q4 [label="A"];
+  q2[style="state,accepting",label="2"];
+  q2->q1 [label="A, G"];
+  q2->q2 [label="T",topath="loop above"];
+  q2->q3 [label="C"];
+  q3[style="state,accepting",label="3"];
+  q3->q1 [label="G"];
+  q3->q2 [label="T"];
+  q3->q4 [label="A, C"];
+  q4[style="state",label="4"];
+  q4->q4 [label="A, C, G, T",topath="loop above"];
+}

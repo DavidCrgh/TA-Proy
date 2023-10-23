@@ -60,7 +60,7 @@ graph create_graph(int **table, int *accept, char **tags, char *symbols)
 		for(int j = 0; j < total_symbols; j++)
 		{
 			node* dest_node = get_node(&new_graph, table[i][j]);
-			if(dest_node != NULL)
+			if(dest_node != NULL || table[i][j] != -1)
 				add_edge(symbols[j], src_node, dest_node);	
 		}
 	}	

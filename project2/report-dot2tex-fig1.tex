@@ -1,0 +1,20 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+\tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20]%
+\node (q1) at (107.21bp,18.0bp) [draw,ellipse,state,initial,accepting] {1};
+  \node (q2) at (27.0bp,98.214bp) [draw,ellipse,state,accepting] {2};
+  \node (q3) at (107.21bp,178.43bp) [draw,ellipse,state,accepting] {3};
+  \node (q4) at (187.43bp,98.214bp) [draw,ellipse,state] {4};
+  \draw [->] (q1) to[loop above] node[auto] {G} (q1);
+  \draw [->] (q1) to[bend left] node[auto] {T} (q2);
+  \draw [->] (q1) to[bend left] node[auto] {C} (q3);
+  \draw [->] (q1) to[bend left] node[auto] {A} (q4);
+  \draw [->] (q2) to[bend left] node[auto] {A, G} (q1);
+  \draw [->] (q2) to[loop above] node[auto] {T} (q2);
+  \draw [->] (q2) to[bend left] node[auto] {C} (q3);
+  \draw [->] (q3) to[bend left] node[auto] {G} (q1);
+  \draw [->] (q3) to[bend left] node[auto] {T} (q2);
+  \draw [->] (q3) to[bend left] node[auto] {A, C} (q4);
+  \draw [->] (q4) to[loop above] node[auto] {A, C, G, T} (q4);
+%
+\end{tikzpicture}

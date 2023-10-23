@@ -10,6 +10,7 @@ edge* create_edge(char symbol, node* dest)
 	edge* new_edge = (edge*) malloc(sizeof(edge));
 	new_edge->next = NULL;
 	new_edge->dest = dest;
-	new_edge->symbol = symbol;
+	new_edge->symbols[0] = symbol;
+	new_edge->symbols[1] = '\0';
 	return new_edge;
 }
