@@ -1,68 +1,76 @@
-\documentclass[xcolor=table]{beamer}
-\usepackage[utf8]{inputenc}
-\usepackage{amssymb}
-\usepackage{colortbl}
-
-\usetheme{Madrid}
-\usecolortheme{default}
-
-
-%------------------------------------------------------------
-\title[Proyecto 1: DFA - Avanzada] %optional
-{Proyecto 1: DFA Avanzada}
-
-\author[ Silvia Calderón, Jorge González, David Valverde]
-{Silvia Calderón, Jorge González, David Valverde}
-
-
-\date[Noviembre 2023] % (optional)
-{Teoría de Autómatas, II semestre 2023}
-
-\logo{\includegraphics[height=0.4cm]{src/pdf/latex/logo-tec.png}}
-
-%------------------------------------------------------------
-
-% Add the table of contents at the beginning of each section
-%\AtBeginSection[]
-%{
-%  \begin{frame}
-%    \frametitle{Tabla de contenidos}
-%    \tableofcontents[currentsection]
-%  \end{frame}
-%}
-
-% Show frame with title at the start of each section
-\AtBeginSection[]{
-  \begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}\insertsectionhead\par%
-  \end{beamercolorbox}
-  \vfill
-  \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not alter this block (unless you're familiar with LaTeX
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ, svg}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{tikz}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
 }
 
-%------------------------------------------------------------
+\usepackage{listings}
+\lstset
+{ %Formatting for code in appendix
+    numbers=left,
+    stepnumber=1,
+}
+\usepackage[shortlabels]{enumitem}
 
-% Start the document
+\pagestyle{fancy}
+
+
+\newenvironment{problem}[2][Exercise]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solution:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+% prevent line break in inline mode
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Fill in the appropriate information below
+\lhead{Silvia Calderón, Jorge González,\\ David Valverde}
+\rhead{Teoría de Autómatas \\ II Semestre, 2023} 
+\chead{\textbf{Proyecto 1: DFA Avanzada}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
-% Create the title page.
-\frame{\titlepage}
+
+\begin{center}
+  {\LARGE Aútomata Determinístico de Estados Finitos (DFA)}
+\end{center}
 
 
-%---------------------------------------------------------
-% Table of contents after the title page
-\begin{frame}
-\frametitle{Tabla de contenidos}
-\tableofcontents
-\end{frame}
-%---------------------------------------------------------
+\section{Definición formal y componentes}
 
+  Un DFA es un quinteto $M = (Q, \Sigma, \delta, q_0, F)$ en donde:
 
-\section{Aútomata de Estados Finitos (DFA)}
+  \begin{itemize}
+      \item Q: conjunto finito de estados
+      \item $\Sigma$: alfabeto
+      \item $\delta$: $Q \times \Sigma \rightarrow Q$ (función de transición entre estados)
+      \item $q_0$: estado inicial t.q. $q_0 \in Q$
+      \item $F$: conjunto de estados de aceptación donde $F \subseteq Q$\newline
+  \end{itemize}
 
+Según lo anterior, los 5 componentes del autómata ingresado son los siguientes:\\
 
 % NOTICE THAT THIS FILES DOES NOT HAVE \end{document}, which means this file can't be compiled by itself
 %\end{document}
