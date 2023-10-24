@@ -19,7 +19,7 @@ typedef struct machine_conf_t {
 
     // Data for each state
     char **labels; 
-    int *accept;      
+    int *accept; // 1 if acceptance state, 0 otherwise
 
 } machine_conf_t;
 

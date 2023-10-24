@@ -73,3 +73,7 @@ char **get_state_labels() {
 char *get_symbols() {
     return config->symbols;
 }
+
+machine_conf_t *get_conf() {
+    return config;
+}
