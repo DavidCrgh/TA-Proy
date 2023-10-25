@@ -65,7 +65,7 @@ void build_components(FILE *out, machine_conf_t *conf) {
 
     fputs("\\begin{mdframed}\n", out);
     
-    fputs("\\textbf{Estados ($Q$):}\\newline\n\\{", out);
+    fputs("\\textbf{Estados:}\\newline\n$Q = $\\{", out);
 
     for (int i = 0; i < num_states; i++) {
         fprintf(out, "%s", conf->labels[i]);
@@ -82,7 +82,7 @@ void build_components(FILE *out, machine_conf_t *conf) {
 
     fputs("\\begin{mdframed}\n", out);
 
-    fputs("\\textbf{Estados de aceptación ($F$):}\\newline\n\\{", out);
+    fputs("\\textbf{Estados de aceptación:}\\newline\n$F = $\\{", out);
 
     for (int i = 0; i < num_states; i++) {
 
@@ -102,8 +102,8 @@ void build_components(FILE *out, machine_conf_t *conf) {
 
     fputs("\\begin{mdframed}\n", out);
 
-    fputs("\\textbf{Estado inicial ($q_0$):}\\newline\n", out);
-    fprintf(out, "%s\\newline\n\n", conf->labels[0]);
+    fputs("\\textbf{Estado inicial:}\\newline\n", out);
+    fprintf(out, "$q_0 = $%s\\newline\n\n", conf->labels[0]);
 
     fputs("\\end{mdframed}\n", out);
 
@@ -112,7 +112,7 @@ void build_components(FILE *out, machine_conf_t *conf) {
 
     fputs("\\begin{mdframed}\n", out);
 
-    fputs("\\textbf{Alfabeto ($\\Sigma$):}\\newline\n\\{", out);
+    fputs("\\textbf{Alfabeto:}\\newline\n$\\Sigma = $\\{", out);
 
     for (int i = 0; i < num_symbols; i++) {
         fputc(conf->symbols[i], out);

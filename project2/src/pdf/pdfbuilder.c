@@ -58,7 +58,7 @@ void build_pdf() {
 
 
     // Invoke pdflatex and evince to create and show the PDF
-    system("pdflatex -output-directory out ./out/out.tex");
+    system("pdflatex --shell-escape -output-directory out ./out/out.tex");
     // NOTE: it might be necessary to invoke pdflatex twice
     system("evince out/out.pdf &");
 }
