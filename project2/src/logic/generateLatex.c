@@ -19,16 +19,20 @@ void generate_dfa_latex(graph pGraph)
 	
 	fprintf(file, "\\documentclass{article}\n");
 	fprintf(file, "\\usepackage{tikz}\n");
+	fprintf(file, "\\usepackage{dot2texi}\n");
+	fprintf(file, "\\usepackage{geometry}\n\n\n");
+	
 	fprintf(file, "\\usetikzlibrary{arrows,shapes,automata}\n");
-	fprintf(file, "\\usepackage{dot2texi}\n\n\n");
+	fprintf(file, "\\geometry{left=1in, right=1in, top=1in, bottom=1in}\n\n");
 	fprintf(file, "\\begin{document}\n");
 	fprintf(file, "\\section{Dibujo DFA}\n");
 	// Graph code
-	fprintf(file, "\\begin{tikzpicture}[>=latex', scale=0.8]\n");
-	fprintf(file, "\\begin{dot2tex}[circo]\n");
-	fprintf(file, "digraph G {\n");
-	fprintf(file, "  node [style=\"state\"];\n");
-	fprintf(file, "  edge [lblstyle=\"auto\",topath=\"bend left\"];\n");
+	fprintf(file, "\\begin{figure}[htb]\n");
+	fprintf(file, "  \\centering\n");
+	fprintf(file, "  \\begin{dot2tex}\n");
+	fprintf(file, "    digraph G {\n");
+	fprintf(file, "      d2tfigpreamble = \"\\tikzstyle{every state}=[very thick]\";\n");
+	fprintf(file, "      edge [lblstyle=\"auto\"];\n");
 	
 	node* actual_node = pGraph.nodes;
 	while(actual_node)
@@ -36,16 +40,19 @@ void generate_dfa_latex(graph pGraph)
 		//Add node
 		int src_id = actual_node->id;
 		int accepted = actual_node->accepted;
-		fprintf(file, "  q%d[style=\"state", src_id);
+		fprintf(file, "      q%d[style=\"state", src_id);
 		if(src_id == 1) fprintf(file, ",initial");
-		if(accepted) fprintf(file, ",accepting");
+		if(accepted)
+			fprintf(file, ",accepting, draw=green!50, fill=green!20");
+		else
+			fprintf(file, ", draw=red!50, fill=red!20");
 		fprintf(file, "\",label=\"%s\"];\n",actual_node->tag);
 		
 		//Add edges
 		edge* actual_edge = actual_node->edges;
 		while(actual_edge)
 		{
-			fprintf(file, "  q%d->q%d [label=\"", src_id, actual_edge->dest->id);
+			fprintf(file, "      q%d->q%d [label=\"", src_id, actual_edge->dest->id);
 			for(int i = 0; i < strlen(actual_edge->symbols); i++)
 			{
 				fprintf(file, "%c", actual_edge->symbols[i]);
@@ -54,26 +61,15 @@ void generate_dfa_latex(graph pGraph)
 					fprintf(file, ", ");
 				}
 			}
-			
-			if(src_id == actual_edge->dest->id) fprintf(file, "\",topath=\"loop above");
 			fprintf(file, "\"];\n");
 			actual_edge = actual_edge->next;
 		}
 		actual_node = actual_node->next;
 	}
-	//fprintf(file, "  A[style=\"state,initial,accepting\"];\n");
-	//fprintf(file, "  B[style=\"state\"];\n");
-	//fprintf(file, "  C[style=\"state,accepting\"];\n");
-	// Iterate graph
-	// End iterate graph
-	//fprintf(file, "	A->B [label=\"0\"];\n");
-	//fprintf(file, "	B->C [label=\"1\"];\n");
-	//fprintf(file, "	C->A [label=\"0\"];\n");
-	//fprintf(file, "	C->D [label=\"1\"];\n");
-	//fprintf(file, "	D->D [label=\"0\"];\n");
-	fprintf(file, "}\n");
-	fprintf(file, "\\end{dot2tex}\n");
-	fprintf(file, "\\end{tikzpicture}\n");
+	fprintf(file, "    }\n");
+	fprintf(file, "  \\end{dot2tex}\n");
+	fprintf(file, "  \\caption{Grafo DFA}\n");
+	fprintf(file, "\\end{figure}\n");
 	// End graph code
 	fprintf(file, "\\end{document}");
 	

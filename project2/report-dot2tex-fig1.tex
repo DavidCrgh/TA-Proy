@@ -1,20 +1,33 @@
 
 \begin{tikzpicture}[>=latex,line join=bevel,]
-\tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20]%
-\node (q1) at (107.21bp,18.0bp) [draw,ellipse,state,initial,accepting] {1};
-  \node (q2) at (27.0bp,98.214bp) [draw,ellipse,state,accepting] {2};
-  \node (q3) at (107.21bp,178.43bp) [draw,ellipse,state,accepting] {3};
-  \node (q4) at (187.43bp,98.214bp) [draw,ellipse,state] {4};
-  \draw [->] (q1) to[loop above] node[auto] {G} (q1);
-  \draw [->] (q1) to[bend left] node[auto] {T} (q2);
-  \draw [->] (q1) to[bend left] node[auto] {C} (q3);
-  \draw [->] (q1) to[bend left] node[auto] {A} (q4);
-  \draw [->] (q2) to[bend left] node[auto] {A, G} (q1);
-  \draw [->] (q2) to[loop above] node[auto] {T} (q2);
-  \draw [->] (q2) to[bend left] node[auto] {C} (q3);
-  \draw [->] (q3) to[bend left] node[auto] {G} (q1);
-  \draw [->] (q3) to[bend left] node[auto] {T} (q2);
-  \draw [->] (q3) to[bend left] node[auto] {A, C} (q4);
-  \draw [->] (q4) to[loop above] node[auto] {A, C, G, T} (q4);
+\tikzstyle{every state}=[very thick]%
+\node (q1) at (118.0bp,279.0bp) [draw,ellipse,state,initial,accepting, draw=green!50, fill=green!20] {1};
+  \node (q2) at (27.0bp,192.0bp) [draw,ellipse,state,accepting, draw=green!50, fill=green!20] {2};
+  \node (q3) at (118.0bp,105.0bp) [draw,ellipse,state,accepting, draw=green!50, fill=green!20] {3};
+  \node (q4) at (161.0bp,18.0bp) [draw,ellipse,state, draw=red!50, fill=red!20] {4};
+  \draw [->] (q1) ..controls (153.51bp,287.49bp) and (163.0bp,284.91bp)  .. (163.0bp,279.0bp) .. controls (163.0bp,275.03bp) and (158.72bp,272.56bp)  .. (q1);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (169.0bp,279.0bp) node[auto] {G};
+  \draw [->] (q1) ..controls (92.591bp,253.9bp) and (77.954bp,240.08bp)  .. (65.0bp,228.0bp) .. controls (60.092bp,223.42bp) and (54.807bp,218.53bp)  .. (q2);
+  \draw (84.0bp,235.5bp) node[auto] {T};
+  \draw [->] (q1) ..controls (118.0bp,231.0bp) and (118.0bp,169.11bp)  .. (q3);
+  \draw (123.5bp,192.0bp) node[auto] {C};
+  \draw [->] (q1) ..controls (137.76bp,257.83bp) and (143.36bp,250.53bp)  .. (147.0bp,243.0bp) .. controls (153.53bp,229.5bp) and (151.29bp,224.75bp)  .. (154.0bp,210.0bp) .. controls (165.47bp,147.62bp) and (171.1bp,132.24bp)  .. (176.0bp,69.0bp) .. controls (176.52bp,62.353bp) and (177.34bp,60.531bp)  .. (176.0bp,54.0bp) .. controls (175.37bp,50.926bp) and (174.46bp,47.789bp)  .. (q4);
+  \draw (172.0bp,148.5bp) node[auto] {A};
+  \draw [->] (q2) ..controls (22.686bp,220.7bp) and (23.274bp,233.7bp)  .. (30.0bp,243.0bp) .. controls (41.95bp,259.52bp) and (62.977bp,268.25bp)  .. (q1);
+  \draw (45.5bp,235.5bp) node[auto] {A, G};
+  \draw [->] (q2) ..controls (62.508bp,200.49bp) and (72.0bp,197.91bp)  .. (72.0bp,192.0bp) .. controls (72.0bp,188.03bp) and (67.715bp,185.56bp)  .. (q2);
+  \draw (77.0bp,192.0bp) node[auto] {T};
+  \draw [->] (q2) ..controls (36.491bp,163.57bp) and (42.915bp,150.31bp)  .. (52.0bp,141.0bp) .. controls (61.273bp,131.5bp) and (73.68bp,124.0bp)  .. (q3);
+  \draw (57.5bp,148.5bp) node[auto] {C};
+  \draw [->] (q3) ..controls (128.33bp,128.12bp) and (130.69bp,134.72bp)  .. (132.0bp,141.0bp) .. controls (141.25bp,185.38bp) and (141.25bp,198.62bp)  .. (132.0bp,243.0bp) .. controls (131.37bp,246.04bp) and (130.49bp,249.16bp)  .. (q1);
+  \draw (144.0bp,192.0bp) node[auto] {G};
+  \draw [->] (q3) ..controls (88.453bp,133.6bp) and (66.332bp,154.26bp)  .. (q2);
+  \draw (82.0bp,148.5bp) node[auto] {T};
+  \draw [->] (q3) ..controls (132.48bp,75.382bp) and (141.05bp,58.443bp)  .. (q4);
+  \draw (157.0bp,61.5bp) node[auto] {A, C};
+  \draw [->] (q4) ..controls (196.51bp,26.49bp) and (206.0bp,23.906bp)  .. (206.0bp,18.0bp) .. controls (206.0bp,14.032bp) and (201.72bp,11.563bp)  .. (q4);
+  \draw (239.5bp,18.0bp) node[auto] {A, C, G, T};
 %
 \end{tikzpicture}
