@@ -135,8 +135,6 @@ void testingGraph()
     graph graph = create_graph(table, accept, tags, symbols);
     
     layout(&graph);
-    
-    //generate_dfa_latex(graph);
 }
 
 
