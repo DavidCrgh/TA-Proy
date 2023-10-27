@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv) 
 {
-    //init_gui(argc, argv);
-    testingGraph();
+    init_gui(argc, argv);
+    //testingGraph();
     return 0;
 }

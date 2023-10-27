@@ -8,7 +8,7 @@
 #include "../logic/graph.h"
 #include "../logic/matrix.h"
 #include "../logic/common.h"
-#include "../logic/generateLatex.h"
+#include "../pdf/graphgen.h"
 
 void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
 {
@@ -136,7 +136,7 @@ void testingGraph()
     
     layout(&graph);
     
-    generate_dfa_latex(graph);
+    //generate_dfa_latex(graph);
 }
 
 
