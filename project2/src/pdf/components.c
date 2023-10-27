@@ -78,37 +78,7 @@ void build_components(FILE *out, machine_conf_t *conf) {
     fputs("\\end{mdframed}\n", out);
 
 
-    // Acceptance states (F)
-
-    fputs("\\begin{mdframed}\n", out);
-
-    fputs("\\textbf{Estados de aceptación:}\\newline\n$F = $\\{", out);
-
-    for (int i = 0; i < num_states; i++) {
-
-        if (conf->accept[i] == 1) {
-            fprintf(out, "%s", conf->labels[i]);
-
-            if (i != num_states - 1) fputs(", ", out);
-        }
-    }
-
-    fputs("\\}\\newline\n\n", out);
-
-    fputs("\\end{mdframed}\n", out);
-
-
-    // Initial state (q_0)
-
-    fputs("\\begin{mdframed}\n", out);
-
-    fputs("\\textbf{Estado inicial:}\\newline\n", out);
-    fprintf(out, "$q_0 = $%s\\newline\n\n", conf->labels[0]);
-
-    fputs("\\end{mdframed}\n", out);
-
-
-    // Alphabet (Sigma)
+	// Alphabet (Sigma)
 
     fputs("\\begin{mdframed}\n", out);
 
@@ -122,8 +92,39 @@ void build_components(FILE *out, machine_conf_t *conf) {
     fputs("\\}\\newline\n\n", out);
 
     fputs("\\end{mdframed}\n", out);
-
-    
-    // Transition function (delta)
+	
+	
+	// Transition function (delta)
     build_transition_table(out, conf);
+    
+    
+    // Initial state (q_0)
+
+    fputs("\\begin{mdframed}\n", out);
+
+    fputs("\\textbf{Estado inicial:}\\newline\n", out);
+    fprintf(out, "$q_0 = $%s\\newline\n\n", conf->labels[0]);
+
+    fputs("\\end{mdframed}\n", out);
+    
+
+    // Acceptance states (F)
+
+    fputs("\\begin{mdframed}\n", out);
+
+    fputs("\\textbf{Estados de aceptación:}\\newline\n$F = $\\{", out);
+	
+    int printcomma = 0;
+    for (int i = 0; i < num_states; i++) {
+
+        if (conf->accept[i] == 1) {
+            if (printcomma) fputs(", ", out);
+            fprintf(out, "%s", conf->labels[i]);
+            printcomma = 1;
+        }
+    }
+
+    fputs("\\}\\newline\n\n", out);
+
+    fputs("\\end{mdframed}\n", out);
 }

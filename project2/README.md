@@ -16,6 +16,12 @@ Once the DFA is configured, the user can evaluate strings to view the correspond
 ## Requirements
 
 - GTK version 3.24 or greater
+- Python 2.7 or 3.X
+- pyparsing 1.4.8 or greater
+- Graphviz
+- preview-latex/AUCTeX
+- PGZ/TikZ version 2.0 or later
+- dot2tex
 
 ## How to compile
 In the same directory as the included Makefile, run:
