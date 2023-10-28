@@ -229,6 +229,8 @@ static void get_datas(GtkWidget *widget, gpointer data)
 
 static void build_transition_grid(GtkWidget *widget, gpointer data) {
 
+    free_combo_strings();
+
     num_states = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(states_spin));
     num_symbols = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(symbols_spin));
 
@@ -238,9 +240,6 @@ static void build_transition_grid(GtkWidget *widget, gpointer data) {
         return;
     }
 
-    free_combo_strings();
-
-	
 	GtkWidget *wdg;
     gchar *text;
     
