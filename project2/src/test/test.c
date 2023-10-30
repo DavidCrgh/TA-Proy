@@ -8,6 +8,8 @@
 #include "../logic/graph.h"
 #include "../logic/matrix.h"
 #include "../logic/common.h"
+#include "../logic/strsearch.h"
+#include "../logic/controller.h"
 #include "../pdf/graphgen.h"
 
 void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
@@ -137,6 +139,56 @@ void testingGraph()
     layout(&graph);
 }
 
+void testingStrings()
+{
+	num_states = 4;
+	num_symbols = 4;
+
+	int **table = (int **)createMatrix(num_states, num_symbols, sizeof(int));
+    table[0][0] = 3;
+    table[0][1] = 2;
+    table[0][2] = 0;
+    table[0][3] = 1;
+    table[1][0] = 0;
+    table[1][1] = 2;
+    table[1][2] = 0;
+    table[1][3] = 1;
+    table[2][0] = 3;
+    table[2][1] = 3;
+    table[2][2] = 0;
+    table[2][3] = 1;
+    table[3][0] = 3;
+    table[3][1] = 3;
+    table[3][2] = 3;
+    table[3][3] = 3;
+    
+    int *accept = (int*)createList(num_states, sizeof(int));
+    accept[0] = 0;
+    accept[1] = 0;
+    accept[2] = 0;
+    accept[3] = 0;
+    
+    char **tags = (char **)createMatrix(num_states, 2, sizeof(char));
+    tags[0] = "1";
+    tags[1] = "2";
+    tags[2] = "3";
+    tags[3] = "4";
+    
+    char *symbols = "ACGT";
+    
+    graph graph = create_graph(table, accept, tags, symbols);
+
+	set_machine_config(
+        table, 
+        tags,         // State tags
+        accept, 
+        symbols,       // Alphabet symbols
+        0);                 // Initial state
+
+	machine_conf_t *conf = get_conf();
+
+	get_strings(&graph, conf);
+}
 
 void print_machine_config(machine_conf_t *conf) {
 
