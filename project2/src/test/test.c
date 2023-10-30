@@ -2,6 +2,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "test.h"
 #include "../logic/dfa.h"
 #include "../logic/list.h"
@@ -163,9 +164,9 @@ void testingStrings()
     table[3][3] = 3;
     
     int *accept = (int*)createList(num_states, sizeof(int));
-    accept[0] = 0;
-    accept[1] = 0;
-    accept[2] = 0;
+    accept[0] = 1;
+    accept[1] = 1;
+    accept[2] = 1;
     accept[3] = 0;
     
     char **tags = (char **)createMatrix(num_states, 2, sizeof(char));
@@ -187,7 +188,12 @@ void testingStrings()
 
 	machine_conf_t *conf = get_conf();
 
-	get_strings(&graph, conf);
+	char **strings = get_strings(&graph, conf, true);
+
+	printf("Solutions:\n\n");
+	for (int i = 0; i < 5; i++) {
+		printf("%d.\t\"%s\"\n", i+1, strings[i]);
+	}
 }
 
 void print_machine_config(machine_conf_t *conf) {

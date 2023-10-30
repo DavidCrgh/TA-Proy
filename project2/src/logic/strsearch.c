@@ -18,6 +18,18 @@
 
 static bool qflush_mode = false;
 
+// Obtains the complement of the automata's accepting states.
+int *flip_accept_states(int *accept) {
+    int *new_accept = (int*) malloc(sizeof(int) * num_states);
+
+    for (int i = 0; i < num_states; i++) {
+
+        new_accept[i] = abs(accept[i] - 1);
+    }
+
+    return new_accept;
+}
+
 
 void add_transitions(b_queue_t *q, node *state, char *str) {
 
@@ -42,8 +54,12 @@ void add_transitions(b_queue_t *q, node *state, char *str) {
 
             next_state = current->dest->id - 1;
 
+            
+            // Add (currentString + nextSymbol, nextState) to the queue
             enqueue(q, new_string, next_state);
+            
 
+            // Flush mode is triggered when the queue fills up, this prevents any further writes
             if (q->count == QUEUE_MAX) qflush_mode = true;
 
             symbol_idx++;
@@ -55,8 +71,9 @@ void add_transitions(b_queue_t *q, node *state, char *str) {
     }
 }
 
-char **get_strings(graph *g, machine_conf_t *conf) {
+char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
 
+    // Some setup required to run the string search
     b_queue_t *queue = init_bqueue(QUEUE_MAX);
 
     int current_state = -1;
@@ -68,16 +85,26 @@ char **get_strings(graph *g, machine_conf_t *conf) {
     char **out_strings = (char **) createMatrix(NUM_STR, STRLEN_MAX, sizeof(char*));
     int found = 0;
 
-    enqueue(queue, current_str, 0); // Enqueue empty string and initial state
+    int *accepting = complement ? flip_accept_states(conf->accept) : conf->accept;
+
+
+    // Algorithm starts
+    // Add empty string and initial state to queue
+    enqueue(queue, current_str, 0); 
     print_bqueue(queue);
 
+
+    // Iterate through the queue
     while (queue->count > 0) {
 
         current_str = dequeue(queue, &current_state);
 
         printf("Popped: (%s, %d)\n", current_str, current_state);
 
-        if (conf->accept[current_state] == 1) {
+        
+        // Add the string to the solution whenever we reach an accepting state
+        if (accepting[current_state] == 1) {
+
             strcpy(out_strings[found], current_str);
             printf("Found string: \"%s\" \n", out_strings[found]);
             found++;
@@ -85,6 +112,10 @@ char **get_strings(graph *g, machine_conf_t *conf) {
             if (found == NUM_STR) return out_strings;  
         }
 
+
+        // Add each transition out of the current state to the queue
+        // as long as the strings aren't too long and the queue hasn't been
+        // filled.
         if (strlen(current_str) < STRLEN_MAX && !qflush_mode) {
             
             current_node = get_node(g, current_state);

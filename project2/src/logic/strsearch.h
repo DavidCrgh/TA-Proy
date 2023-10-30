@@ -6,6 +6,6 @@
 #include "graph.h"
 #include "common.h"
 
-char **get_strings(graph *g, machine_conf_t *conf);
+char **get_strings(graph *g, machine_conf_t *conf, bool complement);
 
 #endif // STRSEARCH_H
