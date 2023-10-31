@@ -60,9 +60,9 @@ void generate_graph_section(FILE *out, graph pGraph)
 	fputs("\\end{figure}\n", out);	
 }
 
-void build_graph(FILE *out, machine_conf_t *conf) 
+void build_graph(FILE *out, machine_conf_t *conf, graph *g) 
 {
-	graph graph = create_graph(conf->table, conf->accept, conf->labels, conf->symbols);
+	//graph graph = create_graph(conf->table, conf->accept, conf->labels, conf->symbols);
 	fputs("\n\\newpage\n\n", out);
-	generate_graph_section(out, graph);
+	generate_graph_section(out, *g);
 }

@@ -16,8 +16,6 @@
 #define NUM_STR 5 // How many strings to generate
 
 
-static bool qflush_mode = false;
-
 // Obtains the complement of the automata's accepting states.
 int *flip_accept_states(int *accept) {
     int *new_accept = (int*) malloc(sizeof(int) * num_states);
@@ -31,7 +29,7 @@ int *flip_accept_states(int *accept) {
 }
 
 
-void add_transitions(b_queue_t *q, node *state, char *str) {
+void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 
     edge *current = state->edges;
     char symbol;
@@ -55,12 +53,13 @@ void add_transitions(b_queue_t *q, node *state, char *str) {
             next_state = current->dest->id - 1;
 
             
+            /*if (accept[next_state] == 1) {
+
+            }*/
+
             // Add (currentString + nextSymbol, nextState) to the queue
             enqueue(q, new_string, next_state);
             
-
-            // Flush mode is triggered when the queue fills up, this prevents any further writes
-            if (q->count == QUEUE_MAX) qflush_mode = true;
 
             symbol_idx++;
             symbol = current->symbols[symbol_idx];
@@ -74,7 +73,9 @@ void add_transitions(b_queue_t *q, node *state, char *str) {
 char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
 
     // Some setup required to run the string search
-    b_queue_t *queue = init_bqueue(QUEUE_MAX);
+    b_queue_t *queue = init_bqueue(NUM_STR);
+    b_queue_t *nxt_queue = init_bqueue(NUM_STR);
+    b_queue_t *swap_ptr = NULL;
 
     int current_state = -1;
     node *current_node = NULL;
@@ -95,7 +96,7 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
 
 
     // Iterate through the queue
-    while (queue->count > 0) {
+    while (queue->count > 0 || nxt_queue->count > 0) {
 
         current_str = dequeue(queue, &current_state);
 
@@ -108,24 +109,32 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
             strcpy(out_strings[found], current_str);
             printf("Found string: \"%s\" \n", out_strings[found]);
             found++;
+            queue->limit--;
+            nxt_queue->limit--;
 
             if (found == NUM_STR) return out_strings;  
         }
 
 
         // Add each transition out of the current state to the queue
-        // as long as the strings aren't too long and the queue hasn't been
-        // filled.
-        if (strlen(current_str) < STRLEN_MAX && !qflush_mode) {
+        // as long as the strings aren't too long.
+        if (strlen(current_str) < STRLEN_MAX) {
             
             current_node = get_node(g, current_state);
-            add_transitions(queue, current_node, current_str);
+            add_transitions(nxt_queue, current_node, current_str, accepting);
 
         }
 
+        free(current_str);
+
         print_bqueue(queue);
 
-        free(current_str);
+
+        if (queue->count == 0) {
+            swap_ptr = queue;
+            queue = nxt_queue;
+            nxt_queue = swap_ptr;
+        }
 
         printf("Iterating...\n\n");
     }

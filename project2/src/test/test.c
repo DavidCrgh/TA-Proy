@@ -11,7 +11,7 @@
 #include "../logic/common.h"
 #include "../logic/strsearch.h"
 #include "../logic/controller.h"
-#include "../pdf/graphgen.h"
+//#include "../pdf/graphgen.h"
 
 void fillMatrixRandom(int **matrix, int row, int columns, int min, int max)
 {
@@ -188,7 +188,7 @@ void testingStrings()
 
 	machine_conf_t *conf = get_conf();
 
-	char **strings = get_strings(&graph, conf, true);
+	char **strings = get_strings(&graph, conf, false);
 
 	printf("Solutions:\n\n");
 	for (int i = 0; i < 5; i++) {

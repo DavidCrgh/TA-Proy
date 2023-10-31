@@ -4,10 +4,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "logic/controller.h"
+#include "logic/dfa.h"
+#include"logic/common.h"
+#include "logic/graph.h"
 #include "pdfbuilder.h"
 #include "components.h"
 #include "graphgen.h"
-#include "logic/controller.h"
+#include "stringsgen.h"
+
 
 #define BASE_PATH "./src/pdf/latex/base.tex"
 #define OUT_PATH "./out/out.tex"
@@ -46,18 +51,24 @@ void build_pdf() {
     // Copy base.tex contents into output file
     copy_from_static(BASE_PATH, out);
 
+    machine_conf_t *conf = get_conf();
+    graph graph = create_graph(conf->table, conf->accept, conf->labels, conf->symbols);
+
     // Call function to build section 2 (DFA formal definition)
-    build_components(out, get_conf());
+    build_components(out, conf);
     
     // Call function to build section 3 (DFA Graph)
-    build_graph(out, get_conf());
+    build_graph(out, conf, &graph);
+
+    // Call function to build sections 4 and 5 (strings)
+    build_strings(out, conf, &graph);
 
     // Close the document and file handler
     fputs("\n \\end{document}\\\\", out);
     fclose(out);
     
     // Invoke dot2tex, pdflatex and evince to create and show the PDF
-    system("cd out && pdflatex --shell-escape out.tex");
+    //system("cd out && pdflatex --shell-escape out.tex");
     // NOTE: it might be necessary to invoke pdflatex twice
-    system("evince out/out.pdf &");
+    //system("evince out/out.pdf &");
 }
