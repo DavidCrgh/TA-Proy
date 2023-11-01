@@ -43,6 +43,7 @@ graph create_graph(int **table, int *accept, char **tags, char *symbols)
 {
 	graph new_graph;
 	new_graph.nodes = NULL;
+	reset_counter(); // Resets counterID for nodes
 	
 	int total_nodes = num_states;
 	int total_symbols = num_symbols;

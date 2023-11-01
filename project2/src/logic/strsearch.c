@@ -11,7 +11,7 @@
 #include "node.h"
 #include "edge.h"
 
-#define QUEUE_MAX 10000
+
 #define STRLEN_MAX 30
 #define NUM_STR 5 // How many strings to generate
 
@@ -41,11 +41,12 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 
     while (current != NULL) {
 
+        // Symbol associated with this transition
         symbol = current->symbols[symbol_idx];
 
         while (symbol != '\0') {
 
-            // Append symbol to the existing string
+            // Append transition symbol to the existing string
             new_string = (char *) malloc(sizeof(char) * STRLEN_MAX); // This malloc is paired with free(current_str) in the get_strings function
             strcpy(new_string, str);
             strncat(new_string, &symbol, 1);
@@ -53,13 +54,15 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
             next_state = current->dest->id - 1;
 
             
-            /*if (accept[next_state] == 1) {
-
-            }*/
-
             // Add (currentString + nextSymbol, nextState) to the queue
-            enqueue(q, new_string, next_state);
-            
+            if (accept[next_state] == 1) {
+
+                prioritize(q, new_string, next_state); // Prioritize (push to front) transitions to accepting states
+
+            } else {
+                enqueue(q, new_string, next_state);
+            }
+            //enqueue(q, new_string, next_state);
 
             symbol_idx++;
             symbol = current->symbols[symbol_idx];
@@ -69,6 +72,7 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
         symbol_idx = 0;
     }
 }
+
 
 char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
 
@@ -109,8 +113,9 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
             strcpy(out_strings[found], current_str);
             printf("Found string: \"%s\" \n", out_strings[found]);
             found++;
-            queue->limit--;
-            nxt_queue->limit--;
+            
+            dec_limit(queue);
+            dec_limit(nxt_queue);
 
             if (found == NUM_STR) return out_strings;  
         }

@@ -4,6 +4,8 @@
 #include "bqueue.h"
 #include "common.h"
 
+
+////////// PRIVATE FUNCTIONS //////////////////////////////////////////////////
 bq_node_t *init_bqnode(char *str, int state) {
 
     bq_node_t *new_node = malloc(sizeof(bq_node_t));
@@ -16,6 +18,31 @@ bq_node_t *init_bqnode(char *str, int state) {
 }
 
 
+void delete_last(b_queue_t *queue) {
+
+    if (queue->count == 1) {
+        
+        free(queue->front->str);
+        free(queue->front);
+        queue->front = NULL;
+        queue->back = NULL;
+
+    } else {
+
+        bq_node_t *temp = queue->back;
+        queue->back = temp->prev;
+        queue->back->next = NULL;
+        free(temp->str);
+        free(temp);
+
+    }
+
+    queue->count--;
+}
+
+
+////////// PUBLIC FUNCTIONS ///////////////////////////////////////////////////
+
 b_queue_t *init_bqueue(int limit) {
     b_queue_t *queue = malloc(sizeof(b_queue_t));
     queue->limit = limit;
@@ -26,6 +53,7 @@ b_queue_t *init_bqueue(int limit) {
 
     return queue;
 }
+
 
 int enqueue(b_queue_t *queue, char *str, int state) {
 
@@ -49,6 +77,7 @@ int enqueue(b_queue_t *queue, char *str, int state) {
     return OK;
 }
 
+
 int prioritize(b_queue_t *queue, char *str, int state) {
 
     // Never force nodes onto a queue with 0 capacity
@@ -56,28 +85,10 @@ int prioritize(b_queue_t *queue, char *str, int state) {
     
 
     // If the queue is full, we remove the last element to accommodate the new node
-    if (queue->count == queue->limit) {
+    if (queue->count == queue->limit) delete_last(queue);
 
-        if (queue->count == 1) {
-            free(queue->front->str);
-            free(queue->front);
-
-        } else {
-
-            bq_node_t *temp = queue->back;
-            queue->back = temp->prev;
-            queue->back->next = NULL;
-            free(temp->str);
-            free(temp);
-
-
-        }
-
-        queue->count--;
-    }
 
     // Append new node to start
-
     if (queue->count == 0) return enqueue(queue, str, state);
 
     bq_node_t *new_node = init_bqnode(str, state);
@@ -90,6 +101,7 @@ int prioritize(b_queue_t *queue, char *str, int state) {
 
     return OK;
 }
+
 
 char *dequeue(b_queue_t *queue, int *retstate){
     
@@ -116,6 +128,21 @@ char *dequeue(b_queue_t *queue, int *retstate){
     return outstr;
 }
 
+
+// Safely decreases the queue limit by 1. If the queue is at max capacity, the last node
+// will be deleted.
+int dec_limit(b_queue_t *queue) {
+
+    if (queue->limit == 0) return FAIL;
+
+    if (queue->count == queue->limit) delete_last(queue);
+
+    queue->limit--;
+
+    return OK;
+}
+
+
 void print_bqueue(b_queue_t *queue) {
     bq_node_t *current = queue->front;
 
@@ -128,6 +155,7 @@ void print_bqueue(b_queue_t *queue) {
         current = current->next;
     }
 }
+
 
 void free_bqueue(b_queue_t *queue) {
     // TODO: implement

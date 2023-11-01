@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv) 
 {
-    //init_gui(argc, argv);
+    init_gui(argc, argv);
     //testingGraph();
 
     /*b_queue_t *queue = init_bqueue(6);
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
     printf("Done\n");*/
 
-    testingStrings();
+    //testingStrings();
 
     return 0;
 }

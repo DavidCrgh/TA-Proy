@@ -27,6 +27,7 @@ b_queue_t *init_bqueue(int limit);
 int enqueue(b_queue_t *queue, char *str, int state);
 int prioritize(b_queue_t *queue, char *str, int state);
 char *dequeue(b_queue_t *queue, int *retstate);
+int dec_limit(b_queue_t *queue);
 void print_bqueue(b_queue_t *queue);
 void free_bqueue(b_queue_t *queue);
 

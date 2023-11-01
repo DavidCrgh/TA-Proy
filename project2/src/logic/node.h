@@ -15,5 +15,6 @@ struct node
 
 node* create_node(char *tag, int accepted);
 void add_edge(char symbol, node* src, node *dest);
+void reset_counter();
 
 #endif

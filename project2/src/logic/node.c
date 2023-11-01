@@ -38,3 +38,7 @@ void add_edge(char symbol, node* src, node* dest)
 	new_edge->next = src->edges;
 	src->edges = new_edge;
 }
+
+void reset_counter() {
+	counterID = 1;
+}
