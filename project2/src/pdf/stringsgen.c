@@ -29,11 +29,20 @@ void build_strings(FILE *out, machine_conf_t *conf, graph *g) {
 
     get_strings(g, conf->accept, false, NUM_STRINGS, solutions, &found);
 
-	for (int i = 0; i < found; i++) {
+	if (found == 0) {
 
-		fprintf(out, "\\item ``%s''\n", solutions[i]);
+		fputs("\\item No se encontraron hileras.\n", out);
+
+	} else {
+
+		for (int i = 0; i < found; i++) {
+
+			fprintf(out, "\\item ``%s''\n", solutions[i]);
+
+		}
 
 	}
+	
 
 	fputs("\n\\end{itemize}\n", out);
 
@@ -53,9 +62,17 @@ void build_strings(FILE *out, machine_conf_t *conf, graph *g) {
 
 	get_strings(g, conf->accept, true, NUM_STRINGS, solutions, &found);
 
-	for (int i = 0; i < found; i++) {
+	if (found == 0) {
 
-		fprintf(out, "\\item ``%s''\n", solutions[i]);
+		fputs("\\item No se encontraron hileras.\n", out);
+
+	} else {
+
+		for (int i = 0; i < found; i++) {
+
+			fprintf(out, "\\item ``%s''\n", solutions[i]);
+
+		}
 
 	}
 
