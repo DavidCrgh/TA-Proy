@@ -179,18 +179,27 @@ void testingStrings()
     
     graph graph = create_graph(table, accept, tags, symbols);
 
-	set_machine_config(
-        table, 
-        tags,         // State tags
-        accept, 
-        symbols,       // Alphabet symbols
-        0);                 // Initial state
+	int found = 0;
 
-	machine_conf_t *conf = get_conf();
+	char **strings = (char **) createMatrix(5, 30, sizeof(char*));
+	for (int i = 0; i < 5; i++) {
+		strings[i][0] = '\0';
+	}
+	
+	get_strings(&graph, accept, false, 5, strings, &found);
 
-	char **strings = get_strings(&graph, conf, false);
+	printf("Accepted:\n\n");
+	for (int i = 0; i < 5; i++) {
+		printf("%d.\t\"%s\"\n", i+1, strings[i]);
+	}
 
-	printf("Solutions:\n\n");
+	for (int i = 0; i < 5; i++) {
+		strings[i][0] = '\0';
+	}
+
+	get_strings(&graph, accept, true, 5, strings, &found);
+
+	printf("Rejected:\n\n");
 	for (int i = 0; i < 5; i++) {
 		printf("%d.\t\"%s\"\n", i+1, strings[i]);
 	}

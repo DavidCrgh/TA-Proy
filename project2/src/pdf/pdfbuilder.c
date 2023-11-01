@@ -68,7 +68,7 @@ void build_pdf() {
     fclose(out);
     
     // Invoke dot2tex, pdflatex and evince to create and show the PDF
-    //system("cd out && pdflatex --shell-escape out.tex");
+    system("cd out && pdflatex --shell-escape out.tex");
     // NOTE: it might be necessary to invoke pdflatex twice
-    //system("evince out/out.pdf &");
+    system("evince out/out.pdf &");
 }

@@ -16,17 +16,6 @@ int main(int argc, char **argv)
     char *outstr = NULL;
     int outstate;
 
-    prioritize(queue, mystr, 5);
-    print_bqueue(queue);
-    prioritize(queue, mystr, 10);
-    print_bqueue(queue);
-    prioritize(queue, mystr, 15);
-    print_bqueue(queue);
-
-    enqueue(queue, mystr, 1);
-    enqueue(queue, mystr, 2);
-    enqueue(queue, mystr, 3);
-    print_bqueue(queue);
 
     mystr = (char*) malloc(sizeof(char) * 10);
     prioritize(queue, mystr, 5);
@@ -38,33 +27,14 @@ int main(int argc, char **argv)
     prioritize(queue, mystr, 15);
     print_bqueue(queue);
 
+    mystr = (char*) malloc(sizeof(char) * 10);
     enqueue(queue, mystr, 5);
+    mystr = (char*) malloc(sizeof(char) * 10);
     enqueue(queue, mystr, 2);
     //enqueue(queue, mystr, 4);
     //enqueue(queue, mystr, 6);
 
-    print_bqueue(queue);
-
-
-    prioritize(queue, mystr, 100);
-
-    print_bqueue(queue);
-
-    outstr = dequeue(queue, &outstate);
-    printf("DQ -> (%s, %d)\n", outstr, outstate);
-    
-
-    print_bqueue(queue);
-
-    outstr = dequeue(queue, &outstate);
-    printf("DQ -> (%s, %d)\n", outstr, outstate);
-
-    outstr = dequeue(queue, &outstate);
-    printf("DQ -> (%s, %d)\n", outstr, outstate);
-
-    print_bqueue(queue);
-
-    printf("Done\n");*/
+    free_bqueue(queue);*/
 
     //testingStrings();
 

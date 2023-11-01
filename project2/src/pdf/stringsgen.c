@@ -5,21 +5,62 @@
 #include "stringsgen.h"
 #include "logic/common.h"
 #include "logic/strsearch.h"
+#include "logic/matrix.h"
 
+#define NUM_STRINGS 5
 
 void build_strings(FILE *out, machine_conf_t *conf, graph *g) {
 
-    char **strings = get_strings(g, conf, false);
+	fputs("\n\\section{Hileras de ejemplo}\n", out);
 
-	printf("Accepted strings:\n\n");
-	for (int i = 0; i < 5; i++) {
-		printf("%d.\t\"%s\"\n", i+1, strings[i]);
+
+	// Accepted strings
+
+	fputs("\n\\subsection{Hileras aceptadas}\n", out);
+
+	fputs("\n\\begin{itemize}\n", out);
+
+	char **solutions = (char **) createMatrix(NUM_STRINGS, STRLEN_MAX, sizeof(char*));
+	int found = 0;
+
+	for (int i = 0; i < NUM_STRINGS; i++) {
+		solutions[i][0] = '\0';
 	}
 
-    strings = get_strings(g, conf, true);
-    
-    printf("Rejected strings:\n\n");
-	for (int i = 0; i < 5; i++) {
-		printf("%d.\t\"%s\"\n", i+1, strings[i]);
+    get_strings(g, conf->accept, false, NUM_STRINGS, solutions, &found);
+
+	for (int i = 0; i < found; i++) {
+
+		fprintf(out, "\\item ``%s''\n", solutions[i]);
+
 	}
+
+	fputs("\n\\end{itemize}\n", out);
+
+
+
+	// Rejected strings
+
+	fputs("\n\\subsection{Hileras rechazadas}\n", out);
+
+	fputs("\n\\begin{itemize}\n", out);
+
+
+	for (int i = 0; i < NUM_STRINGS; i++) {
+		solutions[i][0] = '\0';
+	}
+	found = 0;
+
+	get_strings(g, conf->accept, true, NUM_STRINGS, solutions, &found);
+
+	for (int i = 0; i < found; i++) {
+
+		fprintf(out, "\\item ``%s''\n", solutions[i]);
+
+	}
+
+	fputs("\n\\end{itemize}\n\n", out);
+
+
+	freeMatrix((void**) solutions, NUM_STRINGS);
 }

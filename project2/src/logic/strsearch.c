@@ -12,10 +12,6 @@
 #include "edge.h"
 
 
-#define STRLEN_MAX 30
-#define NUM_STR 5 // How many strings to generate
-
-
 // Obtains the complement of the automata's accepting states.
 int *flip_accept_states(int *accept) {
     int *new_accept = (int*) malloc(sizeof(int) * num_states);
@@ -41,7 +37,6 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 
     while (current != NULL) {
 
-        // Symbol associated with this transition
         symbol = current->symbols[symbol_idx];
 
         while (symbol != '\0') {
@@ -56,13 +51,13 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
             
             // Add (currentString + nextSymbol, nextState) to the queue
             if (accept[next_state] == 1) {
-
+                
                 prioritize(q, new_string, next_state); // Prioritize (push to front) transitions to accepting states
 
             } else {
                 enqueue(q, new_string, next_state);
             }
-            //enqueue(q, new_string, next_state);
+
 
             symbol_idx++;
             symbol = current->symbols[symbol_idx];
@@ -74,11 +69,11 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 }
 
 
-char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
+void get_strings(graph *g, int *accept, bool complement, int num_str, char **out_strings, int *out_found) {
 
     // Some setup required to run the string search
-    b_queue_t *queue = init_bqueue(NUM_STR);
-    b_queue_t *nxt_queue = init_bqueue(NUM_STR);
+    b_queue_t *queue = init_bqueue(num_str);
+    b_queue_t *nxt_queue = init_bqueue(num_str);
     b_queue_t *swap_ptr = NULL;
 
     int current_state = -1;
@@ -87,10 +82,9 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
     char *current_str = malloc(sizeof(char) * STRLEN_MAX);
     current_str[0] = '\0'; // First string is epsilon ""
 
-    char **out_strings = (char **) createMatrix(NUM_STR, STRLEN_MAX, sizeof(char*));
     int found = 0;
 
-    int *accepting = complement ? flip_accept_states(conf->accept) : conf->accept;
+    int *accepting = complement ? flip_accept_states(accept) : accept;
 
 
     // Algorithm starts
@@ -117,7 +111,7 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
             dec_limit(queue);
             dec_limit(nxt_queue);
 
-            if (found == NUM_STR) return out_strings;  
+            if (found == num_str) break;  
         }
 
 
@@ -135,14 +129,17 @@ char **get_strings(graph *g, machine_conf_t *conf, bool complement) {
         print_bqueue(queue);
 
 
+        // Swap queues when the current one is empty
         if (queue->count == 0) {
             swap_ptr = queue;
             queue = nxt_queue;
             nxt_queue = swap_ptr;
         }
-
-        printf("Iterating...\n\n");
     }
 
-    return out_strings;
+    printf("Freeing queues... \n\n");
+    free_bqueue(queue);
+    free_bqueue(nxt_queue);
+
+    *out_found = found;
 }

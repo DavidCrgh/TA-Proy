@@ -6,6 +6,7 @@
 
 
 ////////// PRIVATE FUNCTIONS //////////////////////////////////////////////////
+
 bq_node_t *init_bqnode(char *str, int state) {
 
     bq_node_t *new_node = malloc(sizeof(bq_node_t));
@@ -57,7 +58,10 @@ b_queue_t *init_bqueue(int limit) {
 
 int enqueue(b_queue_t *queue, char *str, int state) {
 
-    if (queue->count == queue->limit) return FAIL;
+    if (queue->count == queue->limit) {
+        free(str);
+        return FAIL;
+    }
 
     bq_node_t *new_node = init_bqnode(str, state);
 
@@ -158,5 +162,17 @@ void print_bqueue(b_queue_t *queue) {
 
 
 void free_bqueue(b_queue_t *queue) {
-    // TODO: implement
+    
+    bq_node_t *current = queue->front;
+    bq_node_t *temp = NULL;
+
+    while (current != NULL) {
+
+        temp = current;
+        free(temp->str);
+        current = temp->next;
+        free(temp);
+    }
+
+    free(queue);
 }
