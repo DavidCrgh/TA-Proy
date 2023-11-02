@@ -53,7 +53,7 @@ void set_machine_config(int **table, char **state_labels, int *accept, char *sym
 
     print_machine_config(config);
 
-    createEquationsMatrix(table, num_states, num_symbols);
+    createEquationsMatrix(table, accept, num_states, num_symbols);
 }
 
 int execute_machine(char *input, int *sequence) {
