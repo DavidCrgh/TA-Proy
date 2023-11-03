@@ -6,11 +6,82 @@
 #include "strsearch.h"
 #include "bqueue.h"
 #include "common.h"
+#include "list.h"
 #include "matrix.h"
 #include "graph.h"
 #include "node.h"
 #include "edge.h"
 #include "dfa.h"
+
+
+int *useful_states = NULL;
+
+
+int *get_useful(graph *g, int *accepting, bool complement) {
+
+    int n_states = complement ? num_states + 1 : num_states;
+    int *useful = (int*) createList(n_states, sizeof(int));
+
+    bool changed = true;
+    node *current;
+    edge *current_e;
+
+    int src_id = -1;
+    int dest_id = -1;
+
+
+    // Accept states are useful by default
+    memcpy(useful, accepting, n_states * sizeof(int));
+
+
+    // Repeat this whenever there's changes on the 'useful' array
+    while (changed) {
+        changed = false;
+        current = g->nodes;
+
+        // Iterate all graph nodes
+        while (current != NULL) {
+
+            src_id = current->id - 1;
+
+            // Skip nodes already marked as useful
+            if (useful[src_id] == 1) {
+
+                current = current->next;
+                continue;
+            }
+
+
+            current_e = current->edges;
+
+
+            // Iterate current node's edges
+            while (current_e != NULL) {
+
+                dest_id = current_e->dest->id - 1;
+
+                // A state is useful if it can reach another useful state
+                if (useful[dest_id] == 1) {
+
+                    useful[src_id] = 1;
+                    changed = true;
+                    current_e = NULL; // Stop iterating edges once we find an useful destination
+
+                } else {
+
+                    current_e = current_e->next;
+
+                }
+
+            }
+
+            current = current->next;
+        }
+    }
+
+
+    return useful;
+}
 
 
 // Obtains the complement of the automata's accepting states.
@@ -44,21 +115,25 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 
         while (symbol != '\0') {
 
-            // Append transition symbol to the existing string
-            new_string = (char *) malloc(sizeof(char) * STRLEN_MAX); // This malloc is paired with free(current_str) in the get_strings function
-            strcpy(new_string, str);
-            strncat(new_string, &symbol, 1);
-
             next_state = current->dest->id - 1;
 
-            
-            // Add (currentString + nextSymbol, nextState) to the queue
-            if (accept[next_state] == 1) {
-                
-                prioritize(q, new_string, next_state); // Prioritize (push to front) transitions to accepting states
 
-            } else {
-                enqueue(q, new_string, next_state);
+            if (useful_states[next_state] == 1) {
+
+                 // Append transition symbol to the existing string
+                new_string = (char *) malloc(sizeof(char) * STRLEN_MAX); // This memory is always freed somewhere else
+                strcpy(new_string, str);
+                strncat(new_string, &symbol, 1);
+
+
+                // Add (currentString + nextSymbol, nextState) to the queue
+                if (accept[next_state] == 1) {
+                
+                    prioritize(q, new_string, next_state); // Prioritize (push to front) transitions to accepting states
+
+                } else {
+                    enqueue(q, new_string, next_state);
+                }
             }
 
 
@@ -89,6 +164,7 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
 
 
     int *accepting = NULL;
+    
 
     if (complement) {
         accepting = flip_accept_states(conf->accept);
@@ -97,6 +173,10 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
     } else {
         accepting = conf->accept;
     }
+
+
+    // Define useful states
+    useful_states = get_useful(g, accepting, complement);
 
 
     // Algorithm starts
@@ -149,9 +229,11 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
         }
     }
 
-    printf("Freeing queues... \n\n");
+    // Do some cleanup
     free_bqueue(queue);
     free_bqueue(nxt_queue);
+    free(accepting);
+    free(useful_states);
 
     *out_found = found;
 }
