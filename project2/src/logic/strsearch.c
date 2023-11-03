@@ -10,16 +10,19 @@
 #include "graph.h"
 #include "node.h"
 #include "edge.h"
+#include "dfa.h"
 
 
 // Obtains the complement of the automata's accepting states.
 int *flip_accept_states(int *accept) {
-    int *new_accept = (int*) malloc(sizeof(int) * num_states);
+    int *new_accept = (int*) malloc(sizeof(int) * (num_states + 1));
 
     for (int i = 0; i < num_states; i++) {
 
         new_accept[i] = abs(accept[i] - 1);
     }
+
+    new_accept[num_states] = 1;
 
     return new_accept;
 }
@@ -69,7 +72,7 @@ void add_transitions(b_queue_t *q, node *state, char *str, int *accept) {
 }
 
 
-void get_strings(graph *g, int *accept, bool complement, int num_str, char **out_strings, int *out_found) {
+void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, char **out_strings, int *out_found) {
 
     // Some setup required to run the string search
     b_queue_t *queue = init_bqueue(num_str);
@@ -84,7 +87,16 @@ void get_strings(graph *g, int *accept, bool complement, int num_str, char **out
 
     int found = 0;
 
-    int *accepting = complement ? flip_accept_states(accept) : accept;
+
+    int *accepting = NULL;
+
+    if (complement) {
+        accepting = flip_accept_states(conf->accept);
+        add_sink(g, conf->table, conf->symbols);
+
+    } else {
+        accepting = conf->accept;
+    }
 
 
     // Algorithm starts

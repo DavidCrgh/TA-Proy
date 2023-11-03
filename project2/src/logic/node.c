@@ -15,7 +15,8 @@ node* create_node(char *tag, int accepted)
 	new_node->next = NULL;
 	new_node->edges = NULL;
 	new_node->accepted = accepted;
-	strcpy(new_node->tag, tag);
+	if (tag != NULL) strcpy(new_node->tag, tag);
+	
 	return new_node;
 }
 

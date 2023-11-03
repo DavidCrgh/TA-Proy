@@ -140,7 +140,7 @@ void testingGraph()
     layout(&graph);
 }
 
-void testingStrings()
+/*void testingStrings()
 {
 	num_states = 4;
 	num_symbols = 4;
@@ -203,7 +203,7 @@ void testingStrings()
 	for (int i = 0; i < 5; i++) {
 		printf("%d.\t\"%s\"\n", i+1, strings[i]);
 	}
-}
+}*/
 
 void print_machine_config(machine_conf_t *conf) {
 

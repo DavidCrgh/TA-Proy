@@ -6,6 +6,7 @@
 #include "logic/common.h"
 #include "logic/strsearch.h"
 #include "logic/matrix.h"
+#include "logic/dfa.h"
 
 #define NUM_STRINGS 5
 
@@ -27,7 +28,7 @@ void build_strings(FILE *out, machine_conf_t *conf, graph *g) {
 		solutions[i][0] = '\0';
 	}
 
-    get_strings(g, conf->accept, false, NUM_STRINGS, solutions, &found);
+    get_strings(g, conf, false, NUM_STRINGS, solutions, &found);
 
 	if (found == 0) {
 
@@ -60,7 +61,7 @@ void build_strings(FILE *out, machine_conf_t *conf, graph *g) {
 	}
 	found = 0;
 
-	get_strings(g, conf->accept, true, NUM_STRINGS, solutions, &found);
+	get_strings(g, conf, true, NUM_STRINGS, solutions, &found);
 
 	if (found == 0) {
 

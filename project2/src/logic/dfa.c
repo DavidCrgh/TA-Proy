@@ -68,3 +68,40 @@ graph create_graph(int **table, int *accept, char **tags, char *symbols)
 	
 	return new_graph;
 }
+
+void add_sink(graph *g, int **table, char *symbols) {
+
+	
+	// Create the sink node and add it to the graph
+	node *sink_node = create_node(NULL, 0);
+	printf("Sink ID: %d\n\n", sink_node->id);
+
+	for (int i = 0; i < num_symbols; i++) {
+
+		add_edge(symbols[i], sink_node, sink_node);
+
+	}
+
+	add_node(g, sink_node);
+
+
+	// Set all undefined transitions towards the sink node
+	node *src_node = NULL;
+
+
+	for (int i = 0; i < num_states; i++) {
+
+		for (int j = 0; j < num_symbols; j++) {
+
+			if (table[i][j] == -1) {
+
+				src_node = get_node(g, i);
+				add_edge(symbols[j], src_node, sink_node);
+
+			}
+
+		}
+
+	}
+
+}
