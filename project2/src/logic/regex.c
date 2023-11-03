@@ -76,48 +76,66 @@ void arden(){
 }
 
 void generateRegex(int state, char ***equations, int *processedStates, int num_states)
-{
-    for(int i; i > num_states + 1; i++) {
+{   
+    //for (int k = 0; k < num_states; k++){
+    printf("Enter generate regex\n");
+    for(int i = 0; i < num_states; i++) {
+        //1. j != estado'
+        printf("j != estado'. i = %d\n", i);
         if (i != state){
+            //2. matriz[estado'][j] != ""?
+            printf("matriz[estado'][j] != ""?. i = %d\n", i);
             if(strcmp(equations[state][i], " ") != 0) {
-                if(strcmp(equations[i][i], " ") != 0) {
-                    if(strcmp(equations[state][i], " ") != 0){
-                        if(processedStates[i] == 0) {
-
-                        } else {
-                            processedStates[i] = 1;
-                            generateRegex(i, equations, processedStates, num_states);
-                            for(int j; j > num_states; j++) {
-                                if(strcmp(equations[i][j], " ") != 0){
-                                    if(strcmp(equations[state][j], " ") != 0){
-                                        // matriz[estado'][k] = "(" + matriz[estado'][k] + "+" + matriz[j][k] + matriz[estado'][j] + ")"
-                                        // matriz[estado'][k] = matriz[j][k] + matriz[estado'][j]
-                                    }
+                //3. matriz[j][j] != ""?
+                printf("matriz[j][j] != ""?. i = %d\n", i);
+                if(strcmp(equations[i][i], " ") == 0) {
+                    //4. j está en LEP?
+                    printf("j está en LEP?. i = %d\n", i);
+                    if(processedStates[i] != 0) {
+                        processedStates[i] = 1;
+                        generateRegex(i, equations, processedStates, num_states);
+                    }
+                    else {
+                        for(int j = 0; j < num_states; j++) {
+                            //5. Si matriz[j][k] != ""
+                            if(strcmp(equations[i][j], " ") == 0){
+                                //6. Si matriz[estado'][k] != ""
+                                if(strcmp(equations[state][j], " ") != 0){
+                                    char *tempString = (char *)createList(num_states*num_states, sizeof(char));
+                                    sprintf(tempString, "(%s+%s%s)", equations[state][j], equations[i][j], equations[state][i]);
+                                    strcpy(equations[state][j], tempString);                                    
                                 } else {
-                                    equations[state][j] = " ";
+                                    sprintf(equations[state][j], "%s%s", equations[i][j], equations[state][i]);
                                 }
+                            } else {
+                                equations[state][j] = " ";
                             }
                         }
                     }
-
                 }
             }
         }
-
-        arden();
     }
+        //arden();
+    //}
 
 }
 
 void createEquationsMatrix(int **table1, int *accept, int num_states, int num_symbols)
 {
-    char ***equations = (char ***)create3DMatrix(num_states, num_states + 1, num_states * num_symbols, sizeof(char));
+    char ***equations = (char ***)create3DMatrix(num_states, num_states + 1, num_states * num_states, sizeof(char));
 
     fillStartEquationsMatrix(equations, num_states, num_states + 1);
     fillEquationsMatrix(equations, table1, num_states, num_symbols);
     addParentheses(equations, num_states);
 
     int *processedStates = (int *)createList(num_states, sizeof(int));
+
+    for(int k = 0; k < num_states; k++)
+    {
+        processedStates[k] = 0;
+    }
+
     int *acceptanceStates = accept;
 
     /*
@@ -147,6 +165,20 @@ void createEquationsMatrix(int **table1, int *accept, int num_states, int num_sy
             processedStates[i] = 1;
             generateRegex(i, equations, processedStates, num_states);
         }
+        // Print matrix
+
+        printf("Print equations matrix:");
+        printf("{\n");
+        for(int i = 0; i < num_states; i++)
+        {
+            printf("[%d]{", i);
+            for(int j = 0; j < num_states + 1; j++)
+            {
+                printf("%s,", equations[i][j]);
+            }
+            printf("}\n");
+        }
+        printf("}\n");
     }
 
 }
