@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "controller.h"
 #include "common.h"
 #include "matrix.h"
 #include "list.h"
 #include "dfa.h"
+#include "regex.h"
 
 #include "../test/test.h"
 
@@ -51,6 +53,8 @@ void set_machine_config(int **table, char **state_labels, int *accept, char *sym
     config->first_state = first_state;
 
     print_machine_config(config);
+
+    printf("REGEX = %s\n", getRegex(table, accept, num_states, num_symbols));
 }
 
 int execute_machine(char *input, int *sequence) {
