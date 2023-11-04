@@ -23,7 +23,7 @@ void fillEquationsMatrix(char ***equations, int **table1, int num_states, int co
                 char symbol[2];
                 strncpy(symbol, alphabet+j, 1);
 
-                if(strcmp(equations[landingState][i], " ") == 0)
+                if(strcmp(equations[landingState][i], "") == 0)
                 {
                     strcpy(equations[landingState][i], symbol);
                 } else {
@@ -47,7 +47,7 @@ void fillStartEquationsMatrix(char ***equations, int num_states, int columns)
             if(i == 0 && (j == columns-1)) {
                 strcpy(equations[i][j], EPSILON);
             } else {
-                strcpy(equations[i][j], " ");
+                strcpy(equations[i][j], "");
             }
 		}
 	}
@@ -60,27 +60,20 @@ void addParentheses(char ***equations, int num_states){
 		{
             size_t n = strlen(equations[i][j]);
             if (n > 2) {                
-                char *temp = (char*)createList(n + 2, sizeof(char));
-                strcpy(temp, "(");
-                strcat(equations[i][j], ")");
-                strcat(temp, equations[i][j]);
-                strcpy(equations[i][j], temp);
+                char *tempString = (char*)createList(n + 2, sizeof(char));
+                sprintf(tempString, "(%s)", equations[i][j]);
+                strcpy(equations[i][j], tempString);
             }
+
             
 		}
 	}
 }
 
-void arden(int state, char ***equations, int num_states)
-{
-    //TODO manejar caso donde hay un epsilon
-    sprintf(equations[state][num_states], "%s*", equations[state][state]);
-    sprintf(equations[state][state], " ");
-}
-
 char *generateRegex(int state, char ***equations, int *processedStates, int num_states)
 {   
     int equationsChanged = 1;
+    printf("START GEN REGEX WITH STATE: %d", state);
 
     while (equationsChanged)
     {
@@ -90,9 +83,9 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
         {
             if (i != state)
             {
-                if(strcmp(equations[state][i], " ") != 0) 
+                if(strcmp(equations[state][i], "") != 0) 
                 {
-                    if(strcmp(equations[i][i], " ") != 0) 
+                    if(strcmp(equations[i][i], "") != 0) 
                     {
                         if(processedStates[i] == 0) 
                         {
@@ -106,9 +99,9 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                     {
                         for(int j = 0; j <= num_states; j++) 
                         {
-                            if(strcmp(equations[i][j], " ") != 0)
+                            if(strcmp(equations[i][j], "") != 0)
                             {
-                                if(strcmp(equations[state][j], " ") != 0)
+                                if(strcmp(equations[state][j], "") != 0)
                                 {
                                     char *tempString = (char *)createList(num_states*num_states, sizeof(char));
                                     sprintf(tempString, "(%s+%s%s)", equations[state][j], equations[i][j], equations[state][i]);
@@ -119,9 +112,10 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                                     sprintf(equations[state][j], "%s%s", equations[i][j], equations[state][i]);
                                 }
                             }
-                            equations[state][i] = " ";
-                            equationsChanged = 1;
+                            
                         }  
+                        equations[state][i] = "";
+                        equationsChanged = 1;
                     }
                 }
             }
@@ -143,7 +137,7 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
     char *result = (char *)createList(num_states*num_states, sizeof(char));
     for(int j = 0; j <= num_states; j++)
     {
-        if((j != state) && (strcmp(equations[state][j], " ") != 0))
+        if((j != state) && (strcmp(equations[state][j], "") != 0))
         {
             char *tempString = (char *)createList(num_states*num_states, sizeof(char));
             sprintf(tempString, "%s(%s)*", equations[state][j], equations[state][state]);
@@ -156,7 +150,19 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
     return result;
 }
 
-void createEquationsMatrix(int **table1, int *accept, int num_states, int num_symbols)
+int getAmountAcceptanceStates(int *acceptanceStates, int num_states)
+{
+    int count = 0;
+    for(int i = 0; i < num_states; i++){
+        if (acceptanceStates[i] == 1)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+char *createEquationsMatrix(int **table1, int *accept, int num_states, int num_symbols)
 {
     char ***equations = (char ***)create3DMatrix(num_states, num_states + 1, num_states * num_states, sizeof(char));
 
@@ -186,14 +192,33 @@ void createEquationsMatrix(int **table1, int *accept, int num_states, int num_sy
     }
     printf("}\n");
 
+    char *regex = (char *)createList(num_states*num_states*10, sizeof(char));
+    int remainingAcceptanceStates = getAmountAcceptanceStates(acceptanceStates, num_states);
+
     for(int i=0; i < num_states; i++) 
     {
         if(acceptanceStates[i] == 1 && processedStates[i] == 0)
         {
             processedStates[i] = 1;
+            char *tempString = (char *)createList(num_states*num_states*10, sizeof(char));
+            char *tempString2 = (char *)createList(num_states*num_states*10, sizeof(char));
+
+
+            tempString2 = generateRegex(i, equations, processedStates, num_states);
+            if(remainingAcceptanceStates > 1) 
+            {
+                sprintf(tempString, "%s | ", tempString2);
+            } 
+            else
+            {
+                sprintf(tempString, "%s", tempString2);
+            }
+            strcat(regex, tempString);
+
             printf("REGEX = %s\n", generateRegex(i, equations, processedStates, num_states));
             //TODO encontrar el lugar correcto para aplicar Arden
             //arden(i, equations, num_states);
+            remainingAcceptanceStates--;
         }
     }
 
@@ -209,4 +234,6 @@ void createEquationsMatrix(int **table1, int *accept, int num_states, int num_sy
         printf("}\n");
     }
     printf("}\n");
+
+    return regex;
 }
