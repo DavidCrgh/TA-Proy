@@ -9,6 +9,10 @@
 #include "controller.h"
 
 #define EPSILON "\u03B5"
+#define MAX_STRING_LEN 256
+
+FILE *out;
+char **tags;
 
 void fillEquationsMatrix(char ***equations, int **table1, int num_states, int columns)
 {
@@ -45,7 +49,7 @@ void fillStartEquationsMatrix(char ***equations, int num_states, int columns)
 		for (int j = 0; j < columns; j++)
 		{
             if(i == 0 && (j == columns-1)) {
-                strcpy(equations[i][j], EPSILON);
+                strcpy(equations[i][j], "\\textepsilon ");
             } else {
                 strcpy(equations[i][j], "");
             }
@@ -73,6 +77,31 @@ void addParentheses(char ***equations, int num_states){
 char *generateRegex(int state, char ***equations, int *processedStates, int num_states)
 {   
     int equationsChanged = 1;
+    if(out != NULL)
+    {
+        int flag = 0; // Flag para saber si debemos imprimir un +
+        fprintf(out, "%s = ", tags[state]);
+        for(int k = 0; k <= num_states; k++)
+        {
+            if(strcmp(equations[state][k], "") != 0)
+            {
+                if(flag)
+                {
+                    fputs(" + ", out);
+                }
+                if(k != num_states)
+                {
+                    fprintf(out, "%s%s", tags[k], equations[state][k]);    
+                }
+                else
+                {
+                    fprintf(out, "%s", equations[state][k]);   
+                }
+                flag = 1;
+            }
+        }
+        fputs(" \\par\n", out);
+    }
 
     while (equationsChanged)
     {
@@ -102,8 +131,8 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                             {
                                 if(strcmp(equations[state][j], "") != 0)
                                 {
-                                    char *tempString = (char *)createList(num_states*num_states, sizeof(char));
-                                    sprintf(tempString, "(%s+%s%s)", equations[state][j], equations[i][j], equations[state][i]);
+                                    char *tempString = (char *)createList(MAX_STRING_LEN, sizeof(char));
+                                    sprintf(tempString, "(%s + %s%s)", equations[state][j], equations[i][j], equations[state][i]);
                                     strcpy(equations[state][j], tempString);
                                 } 
                                 else 
@@ -111,9 +140,33 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                                     sprintf(equations[state][j], "%s%s", equations[i][j], equations[state][i]);
                                 }
                             }
-                            
                         }  
                         equations[state][i] = "";
+                        if(out != NULL)
+                        {
+                            int flag = 0; // Flag para saber si debemos imprimir un +
+                            fprintf(out, "%s = ", tags[state]);
+                            for(int k = 0; k <= num_states; k++)
+                            {
+                                if(strcmp(equations[state][k], "") != 0)
+                                {
+                                    if(flag)
+                                    {
+                                        fputs(" + ", out);
+                                    }
+                                    if(k != num_states)
+                                    {
+                                        fprintf(out, "%s%s", tags[k], equations[state][k]);    
+                                    }
+                                    else
+                                    {
+                                        fprintf(out, "%s", equations[state][k]);   
+                                    }
+                                    flag = 1;
+                                }
+                            }
+                            fputs(" \\par\n", out);
+                        }
                         equationsChanged = 1;
                     }
                 }
@@ -133,20 +186,49 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
         }
     }
 
-    char *result = (char *)createList(num_states*num_states, sizeof(char));
+    char *result = (char *)createList(MAX_STRING_LEN, sizeof(char));
     strcpy(result, "");
 
+    // Arden
     for(int j = 0; j <= num_states; j++)
     {
-        if((j != state) && (strcmp(equations[state][j], "") != 0))
+        if((j != state) && (strcmp(equations[state][j], "") != 0) && (strcmp(equations[state][state], "") != 0))
         {
-            char *tempString = (char *)createList(num_states*num_states, sizeof(char));
+            char *tempString = (char *)createList(MAX_STRING_LEN, sizeof(char));
             sprintf(tempString, "%s(%s)*", equations[state][j], equations[state][state]);
             strcpy(equations[state][j], tempString);
-            strcat(result, equations[state][j]);
         }
     }
     equations[state][state] = "";
+    for(int j = 0; j <= num_states; j++)
+    {
+        strcat(result, equations[state][j]);
+    }
+    if(out != NULL)
+    {
+        int flag = 0; // Flag para saber si debemos imprimir un +
+        fprintf(out, "%s = ", tags[state]);
+        for(int k = 0; k <= num_states; k++)
+        {
+            if(strcmp(equations[state][k], "") != 0)
+            {
+                if(flag)
+                {
+                    fputs(" + ", out);
+                }
+                if(k != num_states)
+                {
+                    fprintf(out, "%s%s", tags[k], equations[state][k]);    
+                }
+                else
+                {
+                    fprintf(out, "%s", equations[state][k]);   
+                }
+                flag = 1;
+            }
+        }
+        fputs(" \\par\n", out);
+    }
     return result;
 }
 
@@ -162,9 +244,16 @@ int getAmountAcceptanceStates(int *acceptanceStates, int num_states)
     return count;
 }
 
+char *getRegexOut(FILE * out_regex, char **labels, int **table1, int *accept, int num_states, int num_symbols)
+{
+    out = out_regex;
+    tags = labels;
+    return getRegex(table1, accept, num_states, num_symbols);
+}
+
 char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
 {
-    char ***equations = (char ***)create3DMatrix(num_states, num_states + 1, num_states * num_states, sizeof(char));
+    char ***equations = (char ***)create3DMatrix(num_states, num_states + 1, MAX_STRING_LEN, sizeof(char));
 
     fillStartEquationsMatrix(equations, num_states, num_states + 1);
     fillEquationsMatrix(equations, table1, num_states, num_symbols);
@@ -179,40 +268,75 @@ char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
 
     int *acceptanceStates = accept;
 
-    printf("Print equations matrix before regex generator");
-    printf("{\n");
-    for(int i = 0; i < num_states; i++)
+    if(out != NULL)
     {
-        printf("[%d]{", i);
-        for(int j = 0; j < num_states + 1; j++)
+        fputs("El sistema de ecuaciones inicial es: \\par\n", out);
+        for(int i = 0; i < num_states; i++)
         {
-            printf("%s,", equations[i][j]);
+            int flag = 0; // Flag para saber si debemos imprimir un +
+            fprintf(out, "%s = ", tags[i]);
+            for(int j = 0; j < num_states + 1; j++)
+            {
+                if(strcmp(equations[i][j], "") != 0)
+                {
+                    if(flag)
+                    {
+                        fputs(" + ", out);
+                    }
+                    if(j != num_states)
+                    {
+                        fprintf(out, "%s%s", tags[j], equations[i][j]);    
+                    }
+                    else
+                    {
+                        fprintf(out, "%s", equations[i][j]);   
+                    }
+                    flag = 1;
+                }
+            }
+            fputs(" \\par\n", out);
+        }
+    }
+    else
+    {
+        printf("Print equations matrix before regex generator");
+        printf("{\n");
+        for(int i = 0; i < num_states; i++)
+        {
+            printf("[%d]{", i);
+            for(int j = 0; j < num_states + 1; j++)
+            {
+                printf("%s,", equations[i][j]);
+            }
+            printf("}\n");
         }
         printf("}\n");
     }
-    printf("}\n");
 
-    char *regex = (char *)createList(num_states*num_states*10, sizeof(char));
+    char *regex = (char *)createList(MAX_STRING_LEN, sizeof(char));
     memset(regex,0,strlen(regex));
     int remainingAcceptanceStates = getAmountAcceptanceStates(acceptanceStates, num_states);
 
     
-    
+    if(out != NULL)
+    {
+        fputs("\nLos pasos a realizar son: \\par\n", out);
+    }
     for(int i=0; i < num_states; i++) 
     {
         if(acceptanceStates[i] == 1 && processedStates[i] == 0)
         {
             processedStates[i] = 1;
             
-            char *tempString = (char *)createList(num_states*num_states*10, sizeof(char));
-            char *tempString2 = (char *)createList(num_states*num_states*10, sizeof(char));
+            char *tempString = (char *)createList(MAX_STRING_LEN, sizeof(char));
+            char *tempString2 = (char *)createList(MAX_STRING_LEN, sizeof(char));
             memset(tempString,0,strlen(tempString));
             memset(tempString2,0,strlen(tempString2));
 
             tempString2 = generateRegex(i, equations, processedStates, num_states);
             if(remainingAcceptanceStates > 1) 
             {
-                sprintf(tempString, "%s l ", tempString2);
+                sprintf(tempString, "%s + ", tempString2);
             } 
             else
             {

@@ -54,7 +54,7 @@ void set_machine_config(int **table, char **state_labels, int *accept, char *sym
 
     print_machine_config(config);
 
-    printf("REGEX = %s\n", getRegex(table, accept, num_states, num_symbols));
+    //printf("REGEX = %s\n", getRegex(table, accept, num_states, num_symbols));
 }
 
 int execute_machine(char *input, int *sequence) {

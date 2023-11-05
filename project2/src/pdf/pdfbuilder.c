@@ -12,10 +12,12 @@
 #include "components.h"
 #include "graphgen.h"
 #include "stringsgen.h"
+#include "regexgen.h"
 
 
 #define BASE_PATH "./src/pdf/latex/base.tex"
 #define OUT_PATH "./out/out.tex"
+#define OUT_REGEX_PATH "./out/out_regex.tex"
 
 void copy_from_static(char *src, FILE *dst) {
     char c;
@@ -35,6 +37,7 @@ void copy_from_static(char *src, FILE *dst) {
 
 void build_pdf() {
     FILE *out; // Handle for generated out.tex file
+    FILE *out_regex; // Handle for generated out_regex.tex file
     
     // Create pdflatex output directory if not exists and out file
     struct stat st = {0};
@@ -46,6 +49,12 @@ void build_pdf() {
     out = fopen(OUT_PATH, "w");
     if (out == NULL) {
         printf("Cannot open file %s \n", OUT_PATH);
+    }
+
+    out_regex = fopen(OUT_REGEX_PATH, "w");
+    if(out == NULL)
+    {
+        printf("Cannot open file %s \n", OUT_REGEX_PATH);
     }
 
     // Copy base.tex contents into output file
@@ -61,7 +70,11 @@ void build_pdf() {
     build_graph(out, conf, &graph);
 
     // Call function to build sections 4 and 5 (strings)
-    build_strings(out, conf, &graph);
+    //build_strings(out, conf, &graph);
+
+    // Call function to build section 6 (Regex)
+    build_regex(out, out_regex, conf);
+    copy_from_static(OUT_REGEX_PATH, out);
 
     // Close the document and file handler
     fputs("\n \\end{document}\\\\", out);
