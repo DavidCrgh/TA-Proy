@@ -17,6 +17,10 @@
 int *useful_states = NULL;
 
 
+/*
+ * Returns the automata's useful states. A state is useful if it is an accepting state
+ * or it can reach an accepting state.
+ */
 int *get_useful(graph *g, int *accepting, bool complement) {
 
     int n_states = complement ? num_states + 1 : num_states;
@@ -84,7 +88,7 @@ int *get_useful(graph *g, int *accepting, bool complement) {
 }
 
 
-// Obtains the complement of the automata's accepting states.
+// Returns the complement of the automata's accepting states.
 int *flip_accept_states(int *accept) {
     int *new_accept = (int*) malloc(sizeof(int) * (num_states + 1));
 
@@ -171,7 +175,8 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
         add_sink(g, conf->table, conf->symbols);
 
     } else {
-        accepting = conf->accept;
+        accepting = createList(num_states, sizeof(int));
+        memcpy(accepting, conf->accept, num_states * sizeof(int));
     }
 
 
@@ -182,7 +187,6 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
     // Algorithm starts
     // Add empty string and initial state to queue
     enqueue(queue, current_str, 0); 
-    print_bqueue(queue);
 
 
     // Iterate through the queue
@@ -190,14 +194,11 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
 
         current_str = dequeue(queue, &current_state);
 
-        printf("Popped: (%s, %d)\n", current_str, current_state);
-
         
         // Add the string to the solution whenever we reach an accepting state
         if (accepting[current_state] == 1) {
 
             strcpy(out_strings[found], current_str);
-            printf("Found string: \"%s\" \n", out_strings[found]);
             found++;
             
             dec_limit(queue);
@@ -217,8 +218,6 @@ void get_strings(graph *g, machine_conf_t *conf, bool complement, int num_str, c
         }
 
         free(current_str);
-
-        print_bqueue(queue);
 
 
         // Swap queues when the current one is empty
