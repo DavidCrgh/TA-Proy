@@ -74,33 +74,38 @@ void addParentheses(char ***equations, int num_states){
 	}
 }
 
+void save_regex_change(int state, char **equation)
+{
+    int flag = 0; // Flag para saber si debemos imprimir un +
+    fprintf(out, "%s = ", tags[state]);
+    for(int k = 0; k <= num_states; k++)
+    {
+        if(strcmp(equation[k], "") != 0)
+        {
+            if(flag)
+            {
+                fputs(" + ", out);
+            }
+            if(k != num_states)
+            {
+                fprintf(out, "%s%s", tags[k], equation[k]);    
+            }
+            else
+            {
+                fprintf(out, "%s", equation[k]);   
+            }
+            flag = 1;
+        }
+    }
+    fputs(" \\par\n", out);
+}
+
 char *generateRegex(int state, char ***equations, int *processedStates, int num_states)
 {   
     int equationsChanged = 1;
     if(out != NULL)
     {
-        int flag = 0; // Flag para saber si debemos imprimir un +
-        fprintf(out, "%s = ", tags[state]);
-        for(int k = 0; k <= num_states; k++)
-        {
-            if(strcmp(equations[state][k], "") != 0)
-            {
-                if(flag)
-                {
-                    fputs(" + ", out);
-                }
-                if(k != num_states)
-                {
-                    fprintf(out, "%s%s", tags[k], equations[state][k]);    
-                }
-                else
-                {
-                    fprintf(out, "%s", equations[state][k]);   
-                }
-                flag = 1;
-            }
-        }
-        fputs(" \\par\n", out);
+        save_regex_change(state, equations[state]);
     }
 
     while (equationsChanged)
@@ -144,28 +149,7 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                         equations[state][i] = "";
                         if(out != NULL)
                         {
-                            int flag = 0; // Flag para saber si debemos imprimir un +
-                            fprintf(out, "%s = ", tags[state]);
-                            for(int k = 0; k <= num_states; k++)
-                            {
-                                if(strcmp(equations[state][k], "") != 0)
-                                {
-                                    if(flag)
-                                    {
-                                        fputs(" + ", out);
-                                    }
-                                    if(k != num_states)
-                                    {
-                                        fprintf(out, "%s%s", tags[k], equations[state][k]);    
-                                    }
-                                    else
-                                    {
-                                        fprintf(out, "%s", equations[state][k]);   
-                                    }
-                                    flag = 1;
-                                }
-                            }
-                            fputs(" \\par\n", out);
+                            save_regex_change(state, equations[state]);
                         }
                         equationsChanged = 1;
                     }
@@ -206,28 +190,7 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
     }
     if(out != NULL)
     {
-        int flag = 0; // Flag para saber si debemos imprimir un +
-        fprintf(out, "%s = ", tags[state]);
-        for(int k = 0; k <= num_states; k++)
-        {
-            if(strcmp(equations[state][k], "") != 0)
-            {
-                if(flag)
-                {
-                    fputs(" + ", out);
-                }
-                if(k != num_states)
-                {
-                    fprintf(out, "%s%s", tags[k], equations[state][k]);    
-                }
-                else
-                {
-                    fprintf(out, "%s", equations[state][k]);   
-                }
-                flag = 1;
-            }
-        }
-        fputs(" \\par\n", out);
+        save_regex_change(state, equations[state]);
     }
     return result;
 }
