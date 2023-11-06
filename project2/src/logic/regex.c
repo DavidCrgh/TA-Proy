@@ -9,7 +9,7 @@
 #include "controller.h"
 
 #define EPSILON "\u03B5"
-#define MAX_STRING_LEN 256
+#define MAX_STRING_LEN 1024
 
 FILE *out;
 char **tags;
@@ -145,8 +145,10 @@ char *generateRegex(int state, char ***equations, int *processedStates, int num_
                                     sprintf(equations[state][j], "%s%s", equations[i][j], equations[state][i]);
                                 }
                             }
-                        }  
-                        equations[state][i] = "";
+                        }
+
+                        strcpy(equations[state][i], "");  
+
                         if(out != NULL)
                         {
                             save_regex_change(state, equations[state]);
@@ -223,6 +225,19 @@ char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
     addParentheses(equations, num_states);
 
     int *processedStates = (int *)createList(num_states, sizeof(int));
+
+    printf("Print equations matrix i=%d", 0);
+            printf("{\n");
+            for(int i = 0; i < num_states; i++)
+            {
+                printf("[%d]{", i);
+                for(int j = 0; j < num_states + 1; j++)
+                {
+                    printf("%s,", equations[i][j]);
+                }
+                printf("}\n");
+            }
+    printf("}\n");
 
     for(int k = 0; k < num_states; k++)
     {
