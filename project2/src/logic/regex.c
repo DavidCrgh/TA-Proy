@@ -77,7 +77,7 @@ void addParentheses(char ***equations, int num_states){
 void save_regex_change(int state, char **equation)
 {
     int flag = 0; // Flag para saber si debemos imprimir un +
-    fprintf(out, "%s = ", tags[state]);
+    fprintf(out, "\t\\item %s = ", tags[state]);
     for(int k = 0; k <= num_states; k++)
     {
         if(strcmp(equation[k], "") != 0)
@@ -97,7 +97,7 @@ void save_regex_change(int state, char **equation)
             flag = 1;
         }
     }
-    fputs(" \\par\n", out);
+    fputs(" \n", out);
 }
 
 char *generateRegex(int state, char ***equations, int *processedStates, int num_states)
@@ -233,32 +233,13 @@ char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
 
     if(out != NULL)
     {
-        fputs("El sistema de ecuaciones inicial es: \\par\n", out);
+        fputs("El sistema de ecuaciones inicial es: \n", out);
+        fputs("\\begin{itemize}\n", out);
         for(int i = 0; i < num_states; i++)
         {
-            int flag = 0; // Flag para saber si debemos imprimir un +
-            fprintf(out, "%s = ", tags[i]);
-            for(int j = 0; j < num_states + 1; j++)
-            {
-                if(strcmp(equations[i][j], "") != 0)
-                {
-                    if(flag)
-                    {
-                        fputs(" + ", out);
-                    }
-                    if(j != num_states)
-                    {
-                        fprintf(out, "%s%s", tags[j], equations[i][j]);    
-                    }
-                    else
-                    {
-                        fprintf(out, "%s", equations[i][j]);   
-                    }
-                    flag = 1;
-                }
-            }
-            fputs(" \\par\n", out);
+            save_regex_change(i, equations[i]);
         }
+        fputs("\\end{itemize}\n", out);
     }
     else
     {
@@ -283,7 +264,8 @@ char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
     
     if(out != NULL)
     {
-        fputs("\nLos pasos a realizar son: \\par\n", out);
+        fputs("\nLos pasos a realizar son: \n", out);
+        fputs("\\begin{itemize}\n", out);
     }
     for(int i=0; i < num_states; i++) 
     {
@@ -310,6 +292,10 @@ char *getRegex(int **table1, int *accept, int num_states, int num_symbols)
             free(tempString);
             free(tempString2);
         }
+    }
+    if(out != NULL)
+    {
+        fputs("\\end{itemize}\n", out);
     }
 
     printf("Print equations matrix after regex generator");
