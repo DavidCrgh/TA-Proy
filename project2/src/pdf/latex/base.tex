@@ -1,0 +1,80 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add your packages here
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ, svg}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{dot2texi}
+\usepackage{tikz}
+\usepackage{textgreek}
+\usetikzlibrary{arrows,shapes,automata}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\usepackage{listings}
+\lstset
+{ %Formatting for code in appendix
+    numbers=left,
+    stepnumber=1,
+}
+\usepackage[shortlabels]{enumitem}
+
+\pagestyle{fancy}
+
+
+\newenvironment{problem}[2][Exercise]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solution:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+% prevent line break in inline mode
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Fill in the appropriate information below
+\lhead{Silvia Calderón, Jorge González,\\ David Valverde}
+\rhead{Teoría de Autómatas \\ II Semestre, 2023} 
+\chead{\textbf{Proyecto 1: DFA Avanzada}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\begin{center}
+  {\LARGE Aútomata Determinístico de Estados Finitos (DFA)}
+\end{center}
+
+
+\section{Definición formal y componentes}
+
+  Un DFA es un quinteto $M = (Q, \Sigma, \delta, q_0, F)$ en donde:
+
+  \begin{itemize}
+      \item Q: conjunto finito de estados
+      \item $\Sigma$: alfabeto
+      \item $\delta$: $Q \times \Sigma \rightarrow Q$ (función de transición entre estados)
+      \item $q_0$: estado inicial t.q. $q_0 \in Q$
+      \item $F$: conjunto de estados de aceptación donde $F \subseteq Q$\newline
+  \end{itemize}
+
+Según lo anterior, los 5 componentes del autómata ingresado son los siguientes:\\
+
+% IMPORTANT NOTE: this base file is incomplete as it is missing the \end{document} line
+% and thus it will not compile by itself
